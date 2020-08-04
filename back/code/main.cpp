@@ -1,6 +1,7 @@
 #include <iostream>
+#include "Debug/Debug.h"
 int main()
 {
-	std::cout<<"hello";
+    DEBUG("hello word");
 	return 0;
 }

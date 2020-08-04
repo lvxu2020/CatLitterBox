@@ -1,6 +1,6 @@
 .PHONY:clean all
 #CC=$(CC)
-CFLAGS=-Wall -g -lstdc++ -pthread -l dbus-1 -w
+CFLAGS=-Wall -g -lstdc++ -pthread  -w
 CC=g++
 #CFLAGS=-Wall -g  -pthread  -w
 LIBS = -l paho-mqtt3c
