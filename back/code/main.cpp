@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Debug/Debug.h"
 #include "Json/jsonAdapter.h"
+#include "MyDbus/DbusAdapter.h"
 #include <unistd.h>
 
 int main()
@@ -29,6 +30,10 @@ int main()
     std::string testStr = jsonAdapter::parseNode(node,jsonStr);
     printf("test:::: %s*****\n",testStr.c_str());
 
+    DbusAdapter bus;
+    if (bus.sendASignal("/test/signal/Object","test.signal.Type","Test","lvxuNB")) {
+        printf("send succeed\n");
+    }
 
-	return 0;
+    return 0;
 }
