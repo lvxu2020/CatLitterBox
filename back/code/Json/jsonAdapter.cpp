@@ -1,6 +1,8 @@
 #include "jsonAdapter.h"
 
 
+void getValue(cJSON* p, std::string& str);
+std::vector<std::string> mySplit(const std::string& in, const std::string& delim);
 
 jsonAdapter::jsonAdapter()
 {
@@ -122,8 +124,6 @@ std::string jsonAdapter::parseNode(const Node& node, const std::string& in)
     std::string str(in);
     if (str[0] == '/') {
         str.erase(0,1);
-    }else {
-        return "";
     }
     std::vector<std::string> vec = mySplit(str,"/");
     if (vec.size() == 0 && str.size() > 0) {
@@ -133,6 +133,9 @@ std::string jsonAdapter::parseNode(const Node& node, const std::string& in)
     for (int i = vec.size(); i > 0; i--) {
         if (i == 1){
             p = cJSON_GetObjectItem(p,vec.back().c_str());
+            if (p == nullptr) {
+                return "";
+            }
             std::string out;
             getValue(p,out);
             return out;
@@ -157,14 +160,14 @@ std::string jsonAdapter::parseNode(const Node& node, const char* in)
     std::vector<std::string> vec = mySplit(str,"/");
     if (vec.size() == 0 && str.size() > 0) {
         vec.push_back(str);
-    }else {
-        return "";
     }
-
     cJSON* p = node.m_root;
     for (int i = vec.size(); i > 0; i--) {
         if (i == 1){
             p = cJSON_GetObjectItem(p,vec.back().c_str());
+            if (p == nullptr) {
+                return "";
+            }
             std::string out;
             getValue(p,out);
             return out;

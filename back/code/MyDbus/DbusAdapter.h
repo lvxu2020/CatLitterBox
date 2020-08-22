@@ -11,11 +11,13 @@ class DbusAdapter
 {
 public:
     DbusAdapter();
-    DBusConnection* sessionBus();
-    bool setDbusWellKnownName(const std::string&);
-    bool setDbusWellKnownName(const char*);
-    bool sendASignal(const std::string&, const std::string&, const std::string&, const std::string&);
-    bool sendASignal(const char*, const char*, const char*, const char*);
+    static DBusConnection* sessionBus();
+    //给连接名分配一个可记忆名字test.singal.dest作为Bus name，这个步骤不是必须的,但推荐这样处理
+    bool setDbusWellKnownName(const std::string& name);
+    bool setDbusWellKnownName(const char* name);
+    //第一个参数路径名第一个字符必须以 "/" 开头
+    bool sendASignal(const std::string& object, const std::string& interface, const std::string& signal, const std::string& message);
+    bool sendASignal(const char* object, const char* interface, const char* signal, const char* message);
 private:
     static DBusConnection* connection;
 };

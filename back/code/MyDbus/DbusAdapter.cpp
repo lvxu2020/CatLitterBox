@@ -1,4 +1,6 @@
 #include "DbusAdapter.h"
+#include <string.h>
+
 
 DBusConnection* DbusAdapter::connection = nullptr;
 
@@ -27,6 +29,7 @@ DBusConnection* DbusAdapter::sessionBus()
 bool DbusAdapter::setDbusWellKnownName(const std::string& name)
 {
     DBusError err;
+    dbus_error_init(&err);
     int ret = dbus_bus_request_name(connection, name.c_str(), DBUS_NAME_FLAG_REPLACE_EXISTING, &err);
     if (dbus_error_is_set(&err)) {
         fprintf(stderr, "Name Err :%s\n", err.message);
@@ -38,6 +41,7 @@ bool DbusAdapter::setDbusWellKnownName(const std::string& name)
 bool DbusAdapter::setDbusWellKnownName(const char* name)
 {
     DBusError err;
+    dbus_error_init(&err);
     int ret = dbus_bus_request_name(connection, name, DBUS_NAME_FLAG_REPLACE_EXISTING, &err);
     if (dbus_error_is_set(&err)) {
         fprintf(stderr, "Name Err :%s\n", err.message);
@@ -48,7 +52,7 @@ bool DbusAdapter::setDbusWellKnownName(const char* name)
 
 bool DbusAdapter::sendASignal(const std::string& object, const std::string& interface, const std::string& signal, const std::string& message)
 {
-    if (connection == nullptr) {
+    if (connection == nullptr || object[0] != '/') {
         return false;
     }
     DBusMessage * msg;
@@ -58,7 +62,7 @@ bool DbusAdapter::sendASignal(const std::string& object, const std::string& inte
         fprintf(stderr,"MessageNULL\n");
         return false;
     }
-    //设置要发送内容
+    //设置要发送内容,   字符串形式
     dbus_message_iter_init_append(msg, &arg);
     dbus_uint32_t  serial = 0;
     const char* sigValue = message.c_str();
@@ -66,6 +70,21 @@ bool DbusAdapter::sendASignal(const std::string& object, const std::string& inte
         fprintf(stderr,"Out OfMemory!\n");
         return false;
     }
+//    // 设置发送内容，   数组形式
+//    if (message.size()) {
+//        char strArg[message.size() + 1];
+//        char* arry;
+//        int len = message.size() + 1; //给 '\0' 留一位
+//        memset(strArg,'/0',len);
+//        memcpy(strArg,message.c_str(),len);
+//        if(!dbus_message_append_args(msg,DBUS_TYPE_ARRAY,DBUS_TYPE_BYTE,
+//                                     &arry, //数组地址的地址
+//                                     len,//数组元素个数
+//                                     DBUS_TYPE_INVALID))
+//        {
+//            fprintf(stderr,"MessageNULL\n");
+//        }
+//    }
     //发送内容
     if ( !dbus_connection_send(connection, msg, &serial)) {
         fprintf(stderr,"Out of Memory!\n");
@@ -78,7 +97,7 @@ bool DbusAdapter::sendASignal(const std::string& object, const std::string& inte
 
 bool DbusAdapter::sendASignal(const char* object, const char* interface, const char* signal, const char* message)
 {
-    if (connection == nullptr) {
+    if (connection == nullptr || object[0] != '/') {
         return false;
     }
     DBusMessage * msg;
@@ -88,13 +107,28 @@ bool DbusAdapter::sendASignal(const char* object, const char* interface, const c
         fprintf(stderr,"MessageNULL\n");
         return false;
     }
-    //设置要发送内容
+    //设置要发送内容,   字符串形式
     dbus_message_iter_init_append(msg, &arg);
     dbus_uint32_t  serial = 0;
     if (!dbus_message_iter_append_basic(&arg,DBUS_TYPE_STRING, &message)) {
         fprintf(stderr,"Out OfMemory!\n");
         return false;
     }
+//    // 设置发送内容，   数组形式
+//    if (message.size()) {
+//        char strArg[message.size() + 1];
+//        char* arry;
+//        int len = message.size() + 1; //给 '\0' 留一位
+//        memset(strArg,'/0',len);
+//        memcpy(strArg,message.c_str(),len);
+//        if(!dbus_message_append_args(msg,DBUS_TYPE_ARRAY,DBUS_TYPE_BYTE,
+//                                     &arry, //数组地址的地址
+//                                     len,//数组元素个数
+//                                     DBUS_TYPE_INVALID))
+//        {
+//            fprintf(stderr,"MessageNULL\n");
+//        }
+//    }
     //发送内容
     if ( !dbus_connection_send(connection, msg, &serial)) {
         fprintf(stderr,"Out of Memory!\n");
@@ -104,7 +138,6 @@ bool DbusAdapter::sendASignal(const char* object, const char* interface, const c
     dbus_message_unref(msg);
     return true;
 }
-
 
 
 

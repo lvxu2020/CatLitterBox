@@ -1,5 +1,7 @@
 SOURCES += \
-    $$PWD/DbusAdapter.cpp
+    $$PWD/DbusAdapter.cpp \
+    $$PWD/DbusReceive.cpp
 
 HEADERS += \
-    $$PWD/DbusAdapter.h
+    $$PWD/DbusAdapter.h \
+    $$PWD/DbusReceive.h
