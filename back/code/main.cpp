@@ -1,17 +1,28 @@
 #include <iostream>
 #include "Debug/Debug.h"
-#include "Json/jsonAdapter.h"
+#include "Json/JsonAdapter.h"
 #include "MyDbus/DbusAdapter.h"
 #include "MyDbus/DbusReceive.h"
+#include "Beat/Beat.h"
 #include <unistd.h>
 
 void testFun()
 {
+    sleep(3);
     DbusAdapter bus;
-    bus.setDbusWellKnownName("lvxu.zhende.nb");
-    if (bus.sendASignal("/","test.signal.Type","Test","lvxuNB")) {
-        printf("send succeed\n");
+    Node test,root;
+    JsonAdapter::addValueToNode(test, "gpio23", "1");
+    JsonAdapter::addValueToNode(root, "id", "1");
+    JsonAdapter::addNodeToNode(root,"remote",test);
+    std::string str;
+
+    JsonAdapter::getUnFormatStrFromNode(root,str);
+    if (DbusAdapter::sendASignal("/","code.hmi","signal",str.c_str())) {
+        printf("send succeed:%s\n",str.c_str());
+    }else {
+        printf("send fail:%s\n",str.c_str());
     }
+    printf("testFun out\n");
 }
 
 int main()
@@ -19,13 +30,14 @@ int main()
     Node root;
     std::string a("test"),b("chenggong"),c;
 
-    jsonAdapter::addValueToNode(root, a.c_str(), b);
+    JsonAdapter::addValueToNode(root, a.c_str(), b);
     Node node1,node2,node3;
-    jsonAdapter::addValueToNode(node1, "nb", "lvxu");
-    jsonAdapter::addNodeToNode(root,"fenzu",node1);
-    jsonAdapter::getStrFromNode(node1,c);
+    JsonAdapter::addValueToNode(node1, "nb", "lvxu");
+    JsonAdapter::addValueToNode(node1, "nb", "lvxu");
+    JsonAdapter::addNodeToNode(root,"fenzu",node1);
+    JsonAdapter::getStrFromNode(node1,c);
     printf("node json:\n%s\n", c.c_str());
-    jsonAdapter::getStrFromNode(root,c);
+    JsonAdapter::getStrFromNode(root,c);
     printf("root json:\n%s\n", c.c_str());
 
     DEBUG("hello world!");
@@ -36,17 +48,19 @@ int main()
     Node node(jsonStr);
     item = cJSON_GetObjectItem(rot, "operation");
     std::string in;
-    jsonAdapter::getStrFromNode(node,c);
+    JsonAdapter::getStrFromNode(node,c);
     printf("test root: %s\n",c.c_str());
-    std::string testStr = jsonAdapter::parseNode(node,"semantic/slots/name");
+    std::string testStr = JsonAdapter::parseNode(node,"semantic/slots/name");
     printf("test1:::: %s*****\n",testStr.c_str());
-    testStr = jsonAdapter::parseNode(node,"semantic/rc");
+    testStr = JsonAdapter::parseNode(node,"semantic/rc");
     printf("test2:::: %s*****\n",testStr.c_str());
-    testFun();
 
-    DbusReceive::instance()->addListenSig("lvxu.cheshi.nb","xiaoXinHao");
+
+    DbusReceive::instance()->addListenSig("code.hmi","signal");
     DbusReceive::instance()->start();
-
+    Beat::instance()->start();
+//    testFun();
+    Beat::instance()->join();
     DbusReceive::instance()->join();
     return 0;
 }

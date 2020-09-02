@@ -1,7 +1,7 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "jsonAdapter.h"
+#include "JsonAdapter.h"
 
 
 class Node
@@ -11,7 +11,7 @@ public:
     Node(const std::string& str);
     Node(const char* str);
     ~Node();
-    friend class jsonAdapter;
+    friend class JsonAdapter;
     bool isValid();
     bool operator<<(const std::string str);
     bool operator<<(const char* str);

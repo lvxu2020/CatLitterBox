@@ -1,20 +1,20 @@
-#include "jsonAdapter.h"
+#include "JsonAdapter.h"
 
 
 void getValue(cJSON* p, std::string& str);
 std::vector<std::string> mySplit(const std::string& in, const std::string& delim);
 
-jsonAdapter::jsonAdapter()
+JsonAdapter::JsonAdapter()
 {
 
 }
 
-jsonAdapter::~jsonAdapter()
+JsonAdapter::~JsonAdapter()
 {
 
 }
 
-bool jsonAdapter::addValueToNode(Node& node, const char* name, const bool& bl)
+bool JsonAdapter::addValueToNode(Node& node, const char* name, const bool& bl)
 {
     if(cJSON_AddBoolToObject(node.m_root, name, bl)) {
         return true;
@@ -22,7 +22,7 @@ bool jsonAdapter::addValueToNode(Node& node, const char* name, const bool& bl)
     return false;
 }
 
-bool jsonAdapter::addValueToNode(Node& node, const char* name, const int& number)
+bool JsonAdapter::addValueToNode(Node& node, const char* name, const int& number)
 {
     if(cJSON_AddNumberToObject(node.m_root, name, number)) {
         return true;
@@ -30,7 +30,7 @@ bool jsonAdapter::addValueToNode(Node& node, const char* name, const int& number
     return false;
 }
 
-bool jsonAdapter::addValueToNode(Node& node, const char* name, const std::string& str)
+bool JsonAdapter::addValueToNode(Node& node, const char* name, const std::string& str)
 {
     if(cJSON_AddStringToObject(node.m_root, name, str.c_str())) {
         return true;
@@ -38,7 +38,7 @@ bool jsonAdapter::addValueToNode(Node& node, const char* name, const std::string
     return false;
 }
 
-bool jsonAdapter::addValueToNode(Node& node, const char* name, const char* str)
+bool JsonAdapter::addValueToNode(Node& node, const char* name, const char* str)
 {
     if(cJSON_AddStringToObject(node.m_root, name, str)) {
         return true;
@@ -46,7 +46,7 @@ bool jsonAdapter::addValueToNode(Node& node, const char* name, const char* str)
     return false;
 }
 
-bool jsonAdapter::addValueToNode(Node& node, const char* name, const double& foatNum)
+bool JsonAdapter::addValueToNode(Node& node, const char* name, const double& foatNum)
 {
     if(cJSON_AddNumberToObject(node.m_root, name, foatNum)) {
         return true;
@@ -54,7 +54,7 @@ bool jsonAdapter::addValueToNode(Node& node, const char* name, const double& foa
     return false;
 }
 
-bool jsonAdapter::addNodeToNode(Node& root, const char* name, Node& node)
+bool JsonAdapter::addNodeToNode(Node& root, const char* name, Node& node)
 {
     char *p = cJSON_Print(node.m_root);
     cJSON* sun = cJSON_Parse(p);
@@ -69,14 +69,14 @@ bool jsonAdapter::addNodeToNode(Node& root, const char* name, Node& node)
     return true;
 }
 
-void jsonAdapter::getStrFromNode(const Node& node, std::string& str)
+void JsonAdapter::getStrFromNode(const Node& node, std::string& str)
 {
     char *p = cJSON_Print(node.m_root);
     str = p;
     free(p);
 }
 
-void jsonAdapter::getUnFormatStrFromNode(const Node& node, std::string& str)
+void JsonAdapter::getUnFormatStrFromNode(const Node& node, std::string& str)
 {
     char *p = cJSON_Print(node.m_root);
     str = p;
@@ -116,7 +116,7 @@ void getValue(cJSON* p, std::string& str)
 
 }
 
-std::string jsonAdapter::parseNode(const Node& node, const std::string& in)
+std::string JsonAdapter::parseNode(const Node& node, const std::string& in)
 {
     if (node.m_root == nullptr) {
         return "";
@@ -148,7 +148,7 @@ std::string jsonAdapter::parseNode(const Node& node, const std::string& in)
     }
 }
 
-std::string jsonAdapter::parseNode(const Node& node, const char* in)
+std::string JsonAdapter::parseNode(const Node& node, const char* in)
 {
     if (node.m_root == nullptr) {
         return "";

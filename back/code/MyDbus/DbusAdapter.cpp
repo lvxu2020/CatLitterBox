@@ -18,7 +18,8 @@ DBusConnection* DbusAdapter::sessionBus()
     }
     DBusError err;
     dbus_error_init(&err);
-    connection = dbus_bus_get(DBUS_BUS_SESSION, &err);
+//    connection = dbus_bus_get(DBUS_BUS_SESSION, &err);// 每次申请得到相同同句柄
+    connection = dbus_bus_get_private(DBUS_BUS_SESSION, &err);// 每次申请得到不同句柄
     if(dbus_error_is_set(&err)){
         fprintf(stderr, "ConnectionErr : %s\n", err.message);
         dbus_error_free(&err);
@@ -113,7 +114,7 @@ bool DbusAdapter::sendASignal(const char* object, const char* interface, const c
     if (!dbus_message_iter_append_basic(&arg,DBUS_TYPE_STRING, &message)) {
         fprintf(stderr,"Out OfMemory!\n");
         return false;
-    }
+    }   
 //    // 设置发送内容，   数组形式
 //    if (message.size()) {
 //        char strArg[message.size() + 1];

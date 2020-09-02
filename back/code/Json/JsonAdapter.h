@@ -12,7 +12,7 @@
 
 class Node;
 
-class jsonAdapter
+class JsonAdapter
 {
 public:
     //参数：输入节点，添加内容名字，添加内容；返回：成功or失败
@@ -30,8 +30,8 @@ public:
     static std::string parseNode(const Node& node, const std::string& in);
     static std::string parseNode(const Node& node, const char* in);
 private:
-    jsonAdapter();
-    ~jsonAdapter();
+    JsonAdapter();
+    ~JsonAdapter();
 };
 
 

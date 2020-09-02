@@ -8,6 +8,7 @@
 
 DbusReceive* DbusReceive::single = nullptr;
 pthread_once_t DbusReceive::ponce_ = PTHREAD_ONCE_INIT;
+DBusConnection* DbusReceive::connection = nullptr;
 
 
 DbusReceive* DbusReceive::instance()
@@ -19,7 +20,17 @@ DbusReceive* DbusReceive::instance()
 
 DbusReceive::DbusReceive()
 {
-
+    DBusError err;
+    dbus_error_init(&err);
+//    connection = dbus_bus_get(DBUS_BUS_SESSION, &err);// 每次申请得到相同同句柄
+    connection = dbus_bus_get_private(DBUS_BUS_SESSION, &err);// 每次申请得到不同句柄
+    if(dbus_error_is_set(&err)){
+        fprintf(stderr, "ConnectionErr : %s\n", err.message);
+        dbus_error_free(&err);
+    }
+    if (connection == nullptr) {
+        DEBUG("DbusReceive can not connect");
+    }
 }
 
 DbusReceive::~DbusReceive()
@@ -42,25 +53,26 @@ void DbusReceive::destorySingle()
 void* DbusReceive::run(void *arg)
 {
     DEBUG("DbusReceive::run\n");
-    while ( DbusAdapter::sessionBus() == nullptr) {
+    while ( connection == nullptr) {
         sleep(1);
     }
     signalMonitor();
+    return nullptr;
 }
 
 int DbusReceive::signalMonitor()
 {
     DBusError err;
     dbus_error_init(&err);
-    if (m_vecInterface.empty() || !dbus_connection_add_filter(DbusAdapter::sessionBus(), msgHandle, NULL, NULL)) {
+    if (m_vecInterface.empty() || !dbus_connection_add_filter(connection, msgHandle, NULL, NULL)) {
         return 1;
     }
     for(auto it = m_vecInterface.begin(); it != m_vecInterface.end(); it++){
         std::string listenStr = "type=\'signal\',interface=\'" + *it + "\'";
         DEBUG("%s", listenStr.c_str());
-        dbus_bus_add_match(DbusAdapter::sessionBus(), listenStr.c_str(), &err);
+        dbus_bus_add_match(connection, listenStr.c_str(), &err);
     }
-    while (dbus_connection_read_write_dispatch(DbusAdapter::sessionBus(), -1)) {
+    while (dbus_connection_read_write_dispatch(connection, -1)) {
     }
     DEBUG("erro");
     return 0;
@@ -92,8 +104,7 @@ bool DbusReceive::addListenSig(const char* interface_ch, const char* signal_ch)
         m_vecListenSig.push_back(temp);
     }
 }
-static bool testFlag = true;
-char* DbusReceive::testPtr = "hello";
+
 DBusHandlerResult DbusReceive::msgHandle(DBusConnection* connection, DBusMessage* msg, void* usr_data)
 {
 
@@ -110,9 +121,10 @@ DBusHandlerResult DbusReceive::msgHandle(DBusConnection* connection, DBusMessage
             DEBUG("fail");
             return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
         }
-
         if (dbus_message_is_signal(msg, it->m_interface.c_str(), it->m_signal.c_str())) {
             DEBUG("get it:%s",str);
+            std::string taskStr(str);
+            DbusReceive::instance()->processTask(taskStr);
 //            dbus_free(str); // 经过测试dbus-1 释放会报错。
             return DBUS_HANDLER_RESULT_HANDLED;
         }
@@ -142,6 +154,33 @@ DBusHandlerResult DbusReceive::msgHandle(DBusConnection* connection, DBusMessage
 std::vector<ListenSig>& DbusReceive::getVecListenSig()
 {
     return m_vecListenSig;
+}
+
+void DbusReceive::processTask(std::string& taskStr)
+{
+    Node tast(taskStr);
+    std::string str = JsonAdapter::parseNode(tast, "id");
+    if (str == "") {
+        DEBUG("parseNode fail");
+        return;
+    }
+    switch (atoi(str.c_str())) {
+    case 0: {
+        Beat::instance()->setRecBeat(true);
+    }
+        break;
+    case 1: {
+        str = JsonAdapter::parseNode(tast, "remote/gpio23");
+        if (str == "") {
+            DEBUG("remote/gpio23 fail");
+            return;
+        }
+        DEBUG("%s",str.c_str());
+        HardMaster::instance()->processTask(atoi(str.c_str()));
+    }
+        break;
+    default: break;
+    }
 }
 
 

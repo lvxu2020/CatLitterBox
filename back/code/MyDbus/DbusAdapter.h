@@ -4,6 +4,7 @@
 #include <dbus/dbus.h>
 #include "../Tool/Thread.h"
 #include "../Debug/Debug.h"
+#include "../Json/JsonAdapter.h"
 #include <string>
 
 
@@ -16,8 +17,8 @@ public:
     bool setDbusWellKnownName(const std::string& name);
     bool setDbusWellKnownName(const char* name);
     //第一个参数路径名第一个字符必须以 "/" 开头
-    bool sendASignal(const std::string& object, const std::string& interface, const std::string& signal, const std::string& message);
-    bool sendASignal(const char* object, const char* interface, const char* signal, const char* message);
+    static bool sendASignal(const std::string& object, const std::string& interface, const std::string& signal, const std::string& message);
+    static bool sendASignal(const char* object, const char* interface, const char* signal, const char* message);
 private:
     static DBusConnection* connection;
 };
