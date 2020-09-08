@@ -7,6 +7,8 @@
 #include "../Json/JsonAdapter.h"
 #include "../Beat/Beat.h"
 #include "../Hard/HardMaster.h"
+#include "../Ota/Ota.h"
+#include "../Ota/LogUpload.h"
 #include <vector>
 #include <string>
 
@@ -40,6 +42,7 @@ private:
     static DBusHandlerResult msgHandle(DBusConnection* connection, DBusMessage* msg, void* usr_data);
     std::vector<ListenSig>& getVecListenSig();
     void processTask(std::string& taskStr);
+private:
     static DbusReceive* single;
     static pthread_once_t ponce_;
     static DBusConnection* connection;

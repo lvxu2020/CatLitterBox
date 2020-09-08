@@ -21,6 +21,7 @@ private:
     void* run(void *arg);
     void openGpio23();
     void closeGpio23();
+private:
     static HardMaster* single;
     static pthread_once_t ponce_;
 };

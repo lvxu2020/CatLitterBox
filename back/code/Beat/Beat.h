@@ -21,6 +21,7 @@ private:
     static void creatSingle();
     static void destorySingle();
     void* run(void *arg);
+private:
     static Beat* single;
     static pthread_once_t ponce_;
     bool m_recBeat;

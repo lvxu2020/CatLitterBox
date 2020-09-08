@@ -45,7 +45,7 @@ void Beat::destorySingle()
 void* Beat::run(void *arg)
 {
 //    DEBUG("Beat start");
-//    sleep(4);//延时三秒等待两边程序初始化
+//    sleep(8);//延时8秒等待两边程序初始化
 //    while (true) {
 //        if (m_recBeat) {
 //            setRecBeat(false);

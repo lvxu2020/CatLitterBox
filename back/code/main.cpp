@@ -6,14 +6,13 @@
 #include "Beat/Beat.h"
 #include <unistd.h>
 
-void testFun()
+void downTest()
 {
     sleep(3);
     DbusAdapter bus;
     Node test,root;
-    JsonAdapter::addValueToNode(test, "gpio23", "1");
-    JsonAdapter::addValueToNode(root, "id", "1");
-    JsonAdapter::addNodeToNode(root,"remote",test);
+    JsonAdapter::addValueToNode(root, "upLoadPath", "http://192.168.1.118/cgi-bin/test.cgi");
+    JsonAdapter::addValueToNode(root, "id", "3");
     std::string str;
 
     JsonAdapter::getUnFormatStrFromNode(root,str);
@@ -27,40 +26,53 @@ void testFun()
 
 int main()
 {
-    Node root;
-    std::string a("test"),b("chenggong"),c;
-
-    JsonAdapter::addValueToNode(root, a.c_str(), b);
-    Node node1,node2,node3;
-    JsonAdapter::addValueToNode(node1, "nb", "lvxu");
-    JsonAdapter::addValueToNode(node1, "nb", "lvxu");
-    JsonAdapter::addNodeToNode(root,"fenzu",node1);
-    JsonAdapter::getStrFromNode(node1,c);
-    printf("node json:\n%s\n", c.c_str());
-    JsonAdapter::getStrFromNode(root,c);
-    printf("root json:\n%s\n", c.c_str());
-
-    DEBUG("hello world!");
-    char * jsonStr  = "{\"semantic\":{\"slots\":{\"name\":\"张三\"}}, \"rc\":8, \"operation\":\"CALL\", \"service\":\"telephone\", \"text\":\"打电话给张三\"}";
-    cJSON * rot = NULL;
-    cJSON * item = NULL;//cjson对象
-    rot = cJSON_Parse(jsonStr);
-    Node node(jsonStr);
-    item = cJSON_GetObjectItem(rot, "operation");
-    std::string in;
-    JsonAdapter::getStrFromNode(node,c);
-    printf("test root: %s\n",c.c_str());
-    std::string testStr = JsonAdapter::parseNode(node,"semantic/slots/name");
-    printf("test1:::: %s*****\n",testStr.c_str());
-    testStr = JsonAdapter::parseNode(node,"semantic/rc");
-    printf("test2:::: %s*****\n",testStr.c_str());
-
-
     DbusReceive::instance()->addListenSig("code.hmi","signal");
     DbusReceive::instance()->start();
     Beat::instance()->start();
-//    testFun();
+    HardMaster::instance()->start();
+
     Beat::instance()->join();
     DbusReceive::instance()->join();
     return 0;
 }
+
+
+//int main()
+//{
+//    Node root;
+//    std::string a("test"),b("chenggong"),c;
+
+//    JsonAdapter::addValueToNode(root, a.c_str(), b);
+//    Node node1,node2,node3;
+//    JsonAdapter::addValueToNode(node1, "nb", "lvxu");
+//    JsonAdapter::addValueToNode(node1, "nb", "lvxu");
+//    JsonAdapter::addNodeToNode(root,"fenzu",node1);
+//    JsonAdapter::getStrFromNode(node1,c);
+//    printf("node json:\n%s\n", c.c_str());
+//    JsonAdapter::getStrFromNode(root,c);
+//    printf("root json:\n%s\n", c.c_str());
+
+//    DEBUG("hello world!");
+//    char * jsonStr  = "{\"semantic\":{\"slots\":{\"name\":\"张三\"}}, \"rc\":8, \"operation\":\"CALL\", \"service\":\"telephone\", \"text\":\"打电话给张三\"}";
+//    cJSON * rot = NULL;
+//    cJSON * item = NULL;//cjson对象
+//    rot = cJSON_Parse(jsonStr);
+//    Node node(jsonStr);
+//    item = cJSON_GetObjectItem(rot, "operation");
+//    std::string in;
+//    JsonAdapter::getStrFromNode(node,c);
+//    printf("test root: %s\n",c.c_str());
+//    std::string testStr = JsonAdapter::parseNode(node,"semantic/slots/name");
+//    printf("test1:::: %s*****\n",testStr.c_str());
+//    testStr = JsonAdapter::parseNode(node,"semantic/rc");
+//    printf("test2:::: %s*****\n",testStr.c_str());
+
+
+//    DbusReceive::instance()->addListenSig("code.hmi","signal");
+//    DbusReceive::instance()->start();
+//    Beat::instance()->start();
+//    downTest();
+//    Beat::instance()->join();
+//    DbusReceive::instance()->join();
+//    return 0;
+//}

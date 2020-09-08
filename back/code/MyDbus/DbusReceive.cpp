@@ -179,6 +179,28 @@ void DbusReceive::processTask(std::string& taskStr)
         HardMaster::instance()->processTask(atoi(str.c_str()));
     }
         break;
+    case 2: {
+        str = JsonAdapter::parseNode(tast, "otaPath");
+        if (str == "") {
+            DEBUG("ota fail");
+            return;
+        }
+        DEBUG("%s",str.c_str());
+        Ota::instance()->setHttpPath(str);
+        Ota::instance()->start();
+    }
+        break;
+    case 3: {
+        str = JsonAdapter::parseNode(tast, "upLoadPath");
+        if (str == "") {
+            DEBUG("ota fail");
+            return;
+        }
+        DEBUG("%s",str.c_str());
+        LogUpload::instance()->setHttpPath(str);
+        LogUpload::instance()->start();
+    }
+
     default: break;
     }
 }
