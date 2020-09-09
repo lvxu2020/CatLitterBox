@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "./UI/WIFI/dialogscanmask.h"
 #include "./NetMonitor/netMonitor.h"
+#include "./UI/Update/Update.h"
 #include <vector>
 
 
@@ -29,15 +30,16 @@ private slots:
     void slot_netStatusChange(bool);
     void on_WIFIScan_clicked();
 
-
-
     void on_listWIFI_clicked(const QModelIndex &index);
 
     void on_connectWIFI_clicked();
 
+    void on_Btn_update_clicked();
+
 private:
     Ui::MainWindow *ui;
     DialogScanMask *scanMask;
+    Update *updateMask;
     void init();
 
     QList<QListWidgetItem*> lstItem;

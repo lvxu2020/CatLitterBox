@@ -31,8 +31,6 @@ FORMS += \
 include    ($$PWD/WIFI/WIFI.pri)
 include    ($$PWD/UI/UI.pri)
 include    ($$PWD/../Base/Base.pro)
-include    ($$PWD/../KTV/KTV.pro)
-include    ($$PWD/../MJson/MJson.pro)
 include    ($$PWD/../LOG/LOG.pro)
 include    ($$PWD/../Mqtt/Mqtt.pro)
 include    ($$PWD/../Communication/Communication.pro)
@@ -48,14 +46,13 @@ INCLUDEPATH += /usr/local/include/ \
 
 
 LIBS += -lpthread \
-#    -L /home/lvxu/qt_output/executableProgram/cat/lib -lLvXuMqtt \
-    -L /home/lvxu/net/mqtt/arm_mqtt/paho.mqtt.c-master/MQinstall/lib/ -lpaho-mqtt3c
+    -L /home/lvxu/net/mqtt/paho.mqtt.c/build_arm/src -lpaho-mqtt3c
 
 
 
 
 
-DESTDIR = ~/qt_output/executableProgram/cat
+DESTDIR = /home/lvxu/outPut/exe
 
 
 

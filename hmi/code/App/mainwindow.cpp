@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     scanMask = new DialogScanMask(this);
+    updateMask = new Update(this);
+    updateMask->hide();
     connect(WIFI_Single::instance(),SIGNAL(sig_scanOver(bool)),this,SLOT(slot_scanfOver(bool)));
     connect(this,SIGNAL(sig_scanWIFI()),WIFI_Single::instance(),SLOT(slot_scanWIFI()));
     connect(WIFI_Single::instance(),SIGNAL(sig_connectStatus(std::string)),this,SLOT(slot_wifiConnectChanged(std::string)));
@@ -25,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete scanMask;
+    delete updateMask;
     delete ui;
 }
 
@@ -40,7 +43,7 @@ void MainWindow::init()
     ui->label->setText("设备号:");
     ui->WIFIName->setText("");
     NetMonitor_Single::instance()->monitorTimerStart();
-    ui->sheibeihao->setText(QString::fromStdString(ReadConf_Single::instance()->getID()));
+    ui->shebeihao->setText(QString::fromStdString(ReadConf_Single::instance()->getID()));
 
 }
 void MainWindow:: clearQListWidget(QListWidget * ptr ,QList<QListWidgetItem*> & vec){
@@ -129,4 +132,11 @@ void MainWindow::slot_netStatusChange(bool net)
     }else {
         ui->netWork1->setText("网络不可用");
     }
+
 }
+
+void MainWindow::on_Btn_update_clicked()
+{
+    updateMask->show();
+}
+
