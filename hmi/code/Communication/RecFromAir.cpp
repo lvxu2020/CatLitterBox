@@ -1,6 +1,7 @@
 #include "RecFromAir.h"
 #include "ReadConf.h"
 #include <unistd.h>
+#include "./Dbus/DbusReceive.h"
 
 //线程部分函数
 static void* runThread(void* arg) {
@@ -58,6 +59,12 @@ pthread_t RecFromAir::self() {
 
 void* RecFromAir::run(void *arg)
 {
+    DbusReceive server;
+    while (1) {
+
+        printf("server is start\n");
+        mySleep(5000);
+    }
     system("echo 23 > /sys/class/gpio/export");
     do{//保证网络状态可用
         mySleep(3000);

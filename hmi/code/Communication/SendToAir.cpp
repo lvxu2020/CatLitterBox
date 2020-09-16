@@ -1,4 +1,6 @@
 #include "SendToAir.h"
+#include "./Dbus/DbusSend.h"
+#include "./Dbus/DbusAdapter.h"
 
 //线程部分函数
 static void* runThread(void* arg) {
@@ -56,6 +58,17 @@ pthread_t SendToAir::self() {
 
 void* SendToAir::run(void *arg)
 {
+    Node node, root;
+    JsonAdapter::addValueToNode(root, "id", "1");
+    JsonAdapter::addValueToNode(node, "gpio23", "1");
+    JsonAdapter::addNodeToNode(root, "remote", node);
+    std::string js;
+    JsonAdapter::getUnFormatStrFromNode(root, js);
+    std::cout << js << std::endl;
+    while (true) {
+        mySleep(2000);
+        DbusSend::sendASiganl("/", "code.hmi", "signal", js.c_str());
+    }
     do{//保证网络状态可用
         mySleep(3000);
     } while (!NetMonitor_Single::instance()->getNetStatus());

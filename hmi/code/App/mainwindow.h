@@ -36,6 +36,8 @@ private slots:
 
     void on_Btn_update_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     DialogScanMask *scanMask;

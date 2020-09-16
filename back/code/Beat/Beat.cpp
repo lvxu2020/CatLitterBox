@@ -55,5 +55,6 @@ void* Beat::run(void *arg)
 //        }
 //        sleep(2);
 //    }
+    system("/home/debian/Cat/run.sh");
     return nullptr;
 }

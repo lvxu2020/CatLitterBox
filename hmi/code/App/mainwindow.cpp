@@ -8,6 +8,7 @@
 #include <vector>
 #include "../Base/base.h"
 #include <QString>
+#include "./Dbus/DbusSend.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -140,3 +141,9 @@ void MainWindow::on_Btn_update_clicked()
     updateMask->show();
 }
 
+
+
+void MainWindow::on_pushButton_clicked()
+{
+
+}

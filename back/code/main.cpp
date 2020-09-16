@@ -24,6 +24,17 @@ void downTest()
     printf("testFun out\n");
 }
 
+
+void demo_fun()
+{
+    /******** Dbus监听信号 start ********/
+    // 选择监听的信号可监听多个信号，一般来说跟同一个进程交互用一个信号就够了
+    DbusReceive::instance()->addListenSig("code.hmi","signal");
+    // 开启线程，循环监听
+    DbusReceive::instance()->start();
+    /******** Dbus监听信号 end ********/
+}
+
 int main()
 {
     DbusReceive::instance()->addListenSig("code.hmi","signal");

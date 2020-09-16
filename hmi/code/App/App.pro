@@ -1,4 +1,5 @@
 QT       += core gui
+QT += dbus
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,6 +36,8 @@ include    ($$PWD/../LOG/LOG.pro)
 include    ($$PWD/../Mqtt/Mqtt.pro)
 include    ($$PWD/../Communication/Communication.pro)
 include    ($$PWD/NetMonitor/NetMonitor.pri)
+include    ($$PWD/Json/Json.pri)
+include    ($$PWD/Dbus/Dbus.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -45,8 +48,9 @@ INCLUDEPATH += /usr/local/include/ \
 
 
 
+
 LIBS += -lpthread \
-    -L /home/lvxu/net/mqtt/paho.mqtt.c/build_arm/src -lpaho-mqtt3c
+    -L/home/lvxu/net/mqtt/paho.mqtt.c/build_arm/src -lpaho-mqtt3c \
 
 
 

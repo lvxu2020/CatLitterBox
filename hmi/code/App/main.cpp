@@ -16,10 +16,10 @@ int main(int argc, char *argv[])
     log.detach();
     MainWindow w;
     w.show();
-//    RecFromAir_Single::instance()->start();
-//    RecFromAir_Single::instance()->detach();
-//    SendToAir_Single::instance()->start();
-//    SendToAir_Single::instance()->detach();
+    RecFromAir_Single::instance()->start();
+    RecFromAir_Single::instance()->detach();
+    SendToAir_Single::instance()->start();
+    SendToAir_Single::instance()->detach();
 
     return a.exec();
 }
