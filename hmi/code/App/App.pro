@@ -38,6 +38,7 @@ include    ($$PWD/../Communication/Communication.pro)
 include    ($$PWD/NetMonitor/NetMonitor.pri)
 include    ($$PWD/Json/Json.pri)
 include    ($$PWD/Dbus/Dbus.pri)
+include    ($$PWD/Beat/Beat.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

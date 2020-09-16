@@ -3,12 +3,15 @@
 
 #include <QObject>
 #include <QDebug>
+#include "../../LOG/Debug.h"
 
 class DbusReceive : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "com.hmi")
 public:
     DbusReceive();
+public slots:
     void service_get(QString st);
 };
 

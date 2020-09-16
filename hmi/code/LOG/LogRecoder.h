@@ -14,7 +14,7 @@
 #define VECTOR_RESERVE_SIZE 20000
 
 
-#define LOG_FILE_DIR "/tmp/CatLog/"
+#define LOG_FILE_DIR "/home/debian/log_hmi/"
 
 #define LOG_CONFIG_FILE "LogConfig"
 #define LOG_FILE_NAME_HEAD "Log_"

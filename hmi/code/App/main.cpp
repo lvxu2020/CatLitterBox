@@ -5,6 +5,8 @@
 #include "../Communication/RecFromAir.h"
 #include "../Communication/SendToAir.h"
 #include "../Communication/ReadConf.h"
+#include "./Dbus/DbusReceive.h"
+#include "./Beat/Beat.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,8 +14,11 @@ int main(int argc, char *argv[])
 
     LogStore log;
     ReadConf_Single::instance();
+    DbusReceive server;
     log.start();
     log.detach();
+    Beat::instance()->start();
+    Beat::instance()->detach();
     MainWindow w;
     w.show();
     RecFromAir_Single::instance()->start();

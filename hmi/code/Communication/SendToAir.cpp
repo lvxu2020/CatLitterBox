@@ -67,7 +67,7 @@ void* SendToAir::run(void *arg)
     std::cout << js << std::endl;
     while (true) {
         mySleep(2000);
-        DbusSend::sendASiganl("/", "code.hmi", "signal", js.c_str());
+//        DbusSend::sendASiganl("/", "code.hmi", "signal", js.c_str());
     }
     do{//保证网络状态可用
         mySleep(3000);

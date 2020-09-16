@@ -59,7 +59,7 @@ pthread_t RecFromAir::self() {
 
 void* RecFromAir::run(void *arg)
 {
-    DbusReceive server;
+
     while (1) {
 
         printf("server is start\n");

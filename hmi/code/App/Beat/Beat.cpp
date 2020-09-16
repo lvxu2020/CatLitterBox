@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdlib.h> // atexit
 #include <unistd.h>
+#include <thread>
 
 
 Beat* Beat::single = nullptr;
@@ -44,26 +45,14 @@ void Beat::destorySingle()
 
 void* Beat::run(void *arg)
 {
-//    DEBUG("Beat start");
-//    sleep(6);//延时6秒等待两边程序初始化
-//    while (true) {
-//        if (m_recBeat) {
-//            setRecBeat(false);
-//        }else {
-//            DEBUG("start reboot");
-//            system("sudo reboot");
-//        }
-//        sleep(2);
-//    }
-    DEBUG("Beat start");
-    DbusAdapter send;
-    while (1) {
-        sleep(2);
-        if(send.sendASignal("/hmi/path", "code.hmi", "signal", "lvxu_ya")){
-            printf("back  send  succeed \n");
-        }else{
-            printf("back  send  faild \n");
-        }
+    Node root;
+    JsonAdapter::addValueToNode(root, "id", "0");
+    std::string send;
+    JsonAdapter::getUnFormatStrFromNode(root, send);
+    root.~Node();
+    while (true) {
+        DbusSend::sendASiganl("/", "code.hmi", "signal", send.c_str());
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     }
     return nullptr;
 }

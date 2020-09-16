@@ -66,8 +66,6 @@ int NetMonitor::ping(std::string str_ip)
             // 相等说明正常
             if (status == 0)
                 return 0;
-
-        //    sleep(1);
         }
 
         return -1;
