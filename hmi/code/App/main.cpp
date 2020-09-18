@@ -2,9 +2,9 @@
 
 #include <QApplication>
 #include "../LOG/LogStore.h"
-#include "../Communication/RecFromAir.h"
-#include "../Communication/SendToAir.h"
-#include "../Communication/ReadConf.h"
+#include "../Mqtt/RecFromAir.h"
+#include "../Mqtt/SendToAir.h"
+#include "../Mqtt/ReadConf.h"
 #include "./Dbus/DbusReceive.h"
 #include "./Beat/Beat.h"
 

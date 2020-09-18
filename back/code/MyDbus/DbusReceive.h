@@ -46,6 +46,7 @@ private:
     static DbusReceive* single;
     static pthread_once_t ponce_;
     static DBusConnection* connection;
+    static DbusAdapter m_sendBus;
     std::vector<std::string> m_vecInterface;
     std::vector<ListenSig> m_vecListenSig;
 

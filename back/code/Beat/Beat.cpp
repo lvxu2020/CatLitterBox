@@ -56,14 +56,14 @@ void* Beat::run(void *arg)
 //        sleep(2);
 //    }
     DEBUG("Beat start");
-    DbusAdapter send;
-    while (1) {
-        sleep(2);
-        if(send.sendASignal("/hmi/path", "code.hmi", "signal", "lvxu_ya")){
-            printf("back  send  succeed \n");
-        }else{
-            printf("back  send  faild \n");
-        }
-    }
+//    DbusAdapter send;
+//    while (1) {
+//        sleep(2);
+//        if(send.sendASignal("/hmi/path", "code.hmi", "signal", "lvxu_ya")){
+//            printf("back  send  succeed \n");
+//        }else{
+//            printf("back  send  faild \n");
+//        }
+//    }
     return nullptr;
 }

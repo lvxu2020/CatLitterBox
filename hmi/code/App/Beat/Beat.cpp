@@ -45,6 +45,7 @@ void Beat::destorySingle()
 
 void* Beat::run(void *arg)
 {
+    return nullptr;
     Node root;
     JsonAdapter::addValueToNode(root, "id", "0");
     std::string send;

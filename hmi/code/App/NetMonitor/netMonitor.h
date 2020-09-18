@@ -6,6 +6,8 @@
 #include <QTimer>
 #include <string>
 #include "../../Mqtt/mqttSend.h"
+#include "../../Mqtt/RecFromAir.h"
+#include "../../Mqtt/SendToAir.h"
 
 #define BAIDU_IP "202.108.22.5"
 
@@ -25,6 +27,7 @@ private slots:
     void slot_monitor();
     void slot_monitorTimerStart();
     void slot_monitorTimerStop();
+    void slot_updateMqttThread(bool);
 private:
     bool netIsOK = false;
     QTimer* monitorPtr = nullptr;

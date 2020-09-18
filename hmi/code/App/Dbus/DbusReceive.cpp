@@ -4,31 +4,36 @@
 #include <iostream>
 #include "../Json/JsonAdapter.h"
 
+
 void DbusReceive::service_get(QString st)
 {
-    std::cout << "Message get from client: "<< st.toStdString()<<std::endl;
     Node tast(st.toStdString());
     std::string str = JsonAdapter::parseNode(tast, "id");
     if (str == "") {
         DEBUG_E("parseNode fail");
         return;
     }
+
     switch (atoi(str.c_str())) {
-    case 0: {
+    case 0: {// OTA
 
     }
         break;
-    case 1: {
+    case 1: {// 硬件消息
+        std::string send(";");
+        send += ReadConf_Single::instance()->getID() + ";" + str;
+        std::string str = JsonAdapter::parseNode(tast, "data");
+        if (str != "") {
+            send += ";" + str + ";";
+            DEBUG_D("bus send:%s",send.c_str());
+            SendToAir_Single::instance()->addTaskQ(send);
+        }
+    }
+        break;
+    case 2: {// Log上传
 
     }
         break;
-    case 2: {
-
-    }
-        break;
-    case 3: {
-
-    }
 
     default: break;
     }

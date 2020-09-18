@@ -39,19 +39,22 @@ public:
     的消息。因此，要确保不丢失连接断开期间的消息，需要使用QoS1或 QoS2级别，同时将清除
     会话标志设置为0。
     */
-    /**************interval***********
+    /* *************interval***********
      * 参考：
      * TCP keepAlive和KeepAliveInterval参数详解-转
      *
      * keep-alive 将在每 KeepAliveInterval 秒重发一次。KeepAliveInterval 默认为1秒。
-    * *******************************/
+     * ****************************** */
     //ip地址，端口，链接超时时间,session
     void setInit(std::string serverAdd, std::string port, int interval, int session);
     //链接mqtt服务器
     int connectMqtt();
     //订阅主题,服务质量，设置回调函数(此回调函数生命周期尽量短暂。以免影响下一条消息接收)
     int subscribe(std::string topic, int qos, void *(*fun)(void *));
-private://单利
+    // 取消订阅
+    int unSubscribe(std::string topic);
+    void unConnectMqtt();
+private://单例
     static void single();
     static void destroy();
     static pthread_once_t ponce_;

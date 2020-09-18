@@ -9,7 +9,7 @@
 DbusReceive* DbusReceive::single = nullptr;
 pthread_once_t DbusReceive::ponce_ = PTHREAD_ONCE_INIT;
 DBusConnection* DbusReceive::connection = nullptr;
-
+DbusAdapter DbusReceive::m_sendBus;
 
 DbusReceive* DbusReceive::instance()
 {
@@ -170,37 +170,30 @@ void DbusReceive::processTask(std::string& taskStr)
     }
         break;
     case 1: {
-        str = JsonAdapter::parseNode(tast, "remote/gpio23");
-        if (str == "") {
-            DEBUG("remote/gpio23 fail");
-            return;
-        }
-        DEBUG("%s",str.c_str());
-        HardMaster::instance()->processTask(atoi(str.c_str()));
+
     }
         break;
     case 2: {
-        str = JsonAdapter::parseNode(tast, "otaPath");
-        if (str == "") {
-            DEBUG("ota fail");
-            return;
-        }
-        DEBUG("%s",str.c_str());
-        Ota::instance()->setHttpPath(str);
-        Ota::instance()->start();
+
     }
         break;
     case 3: {
-        str = JsonAdapter::parseNode(tast, "upLoadPath");
-        if (str == "") {
-            DEBUG("ota fail");
-            return;
-        }
-        DEBUG("%s",str.c_str());
-        LogUpload::instance()->setHttpPath(str);
-        LogUpload::instance()->start();
-    }
 
+    }
+        break;
+    case 4: {
+        Node root;
+        JsonAdapter::addValueToNode(root, "id", "1");
+        JsonAdapter::addValueToNode(root, "data", "3");
+        std::string send;
+        JsonAdapter::getUnFormatStrFromNode(root, send);
+        if (m_sendBus.sendASignal("/hmi/path", "code.back", "signal", send.c_str())) {
+            DEBUG("bus send succeed :%s", send.c_str());
+        }else {
+            DEBUG("bus send fail :%s", send.c_str());
+        }
+    }
+        break;
     default: break;
     }
 }

@@ -11,6 +11,7 @@ NetMonitor::NetMonitor()
     monitorPtr = new QTimer(this);
     monitorPtr->setInterval(5000);
 //    monitorPtr->setSingleShot(true);
+    connect(this,SIGNAL(sig_netSatusChange(bool)),this,SLOT(slot_updateMqttThread));
     connect(monitorPtr,SIGNAL(timeout()),this,SLOT(slot_monitor()));
     connect(this,SIGNAL(monitorTimerStart()),this,SLOT(slot_monitorTimerStart()));
     connect(this,SIGNAL(monitorTimerStop()),this,SLOT(slot_monitorTimerStop()));
@@ -78,18 +79,6 @@ void NetMonitor::slot_monitor()
         res = false;
     }else {
         res = true;
-        // 测试mqtt用的
-//        MqttSend test;
-//        printf("wo neng da yin\n");
-//        test.setInit("192.168.1.151","1883",60,1);
-//        if (0 != test.connectMqtt()) {
-//            printf("lian jie  shi bai tie zi\n");
-//        }else{
-//            printf("connectMqtt chenggong\n");
-//
-//            test.sendMess("cToS","cTos:127;0;luxuNB;",0,0,100L);
-//        }
-
     }
     netIsOK = res;
     sig_netSatusChange(netIsOK);
@@ -108,4 +97,17 @@ void NetMonitor::slot_monitorTimerStop()
 bool NetMonitor::getNetConnection()
 {
     return netIsOK;
+}
+
+void NetMonitor::slot_updateMqttThread(bool connection)
+{
+    if (!connection) return;
+    if (!RecFromAir_Single::instance()->threadIsActive()) {
+        RecFromAir_Single::instance()->start();
+        RecFromAir_Single::instance()->detach();
+    }
+    if (!SendToAir_Single::instance()->threadIsActive()) {
+        SendToAir_Single::instance()->start();
+        SendToAir_Single::instance()->detach();
+    }
 }

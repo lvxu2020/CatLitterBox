@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QDebug>
 #include "../../LOG/Debug.h"
+#include "../Mqtt/ReadConf.h"
+#include "../Mqtt/SendToAir.h"
 
 class DbusReceive : public QObject
 {

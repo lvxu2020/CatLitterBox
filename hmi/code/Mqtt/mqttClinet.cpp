@@ -34,6 +34,19 @@ MqttClinet::~MqttClinet()
     }
 }
 
+void MqttClinet::unConnectMqtt()
+{
+    if (isInit && client != nullptr) {
+        int rc;
+        if ((rc = MQTTClient_disconnect(client, 10000)) != MQTTCLIENT_SUCCESS)
+        {
+            printf("Failed to disconnect, return code %d\n", rc);
+            rc = EXIT_FAILURE;
+        }
+        MQTTClient_destroy(&client);
+    }
+}
+
 MqttClinet* MqttClinet::getIntence()
 {
     pthread_once(&ponce_, &MqttClinet::single);
@@ -55,6 +68,7 @@ void MqttClinet::destroy()
 
 void MqttClinet::setInit(std::string serverAdd, std::string port, int interval, int session)
 {
+    if (isInit) return;
     conn_opts = MQTTClient_connectOptions_initializer;
     addPort = "tcp://" + serverAdd + ":" + port;
     conn_opts.keepAliveInterval = interval;
@@ -99,12 +113,25 @@ int MqttClinet::subscribe(std::string topic, int qos, void *(*fun)(void *))
     if (fun == nullptr) {
         return -1;
     }
-    callbackVec.insert(make_pair(topic,fun));
+    if (callbackVec.find(topic) == callbackVec.end()) {
+        callbackVec.insert(make_pair(topic,fun));
+    }
     if (MQTTCLIENT_SUCCESS != MQTTClient_subscribe(client,topic.c_str(),qos)) {
         DEBUG_E(" MqttClinet dingyue shibai");
         return 0;
     }
     DEBUG_I("MqttClinet dingyue succeed");
+    return 1;
+}
+
+int MqttClinet::unSubscribe(std::string topic)
+{
+
+    if (MQTTCLIENT_SUCCESS != MQTTClient_unsubscribe(client,topic.c_str())) {
+        DEBUG_E(" MqttClinet dingyue shibai");
+        return 0;
+    }
+    DEBUG_I("MqttClinet jiechudingyue succeed");
     return 1;
 }
 
@@ -116,6 +143,7 @@ int MqttClinet::msgarrvd(void *context,char *topicName,int topicLen,MQTTClient_m
     printf("Original Message :%s\n",message->payload);
     std::string topicNameStr = topicName;
     std::map<std::string, void *(*)(void *)>::iterator iter;
+
     iter = MqttClinet::getIntence()->callbackVec.find(std::string(topicName));
     if (MqttClinet::getIntence()->callbackVec.empty() ||
             iter == MqttClinet::getIntence()->callbackVec.end()) {
@@ -128,9 +156,6 @@ int MqttClinet::msgarrvd(void *context,char *topicName,int topicLen,MQTTClient_m
     mess.len = message->payloadlen;
     mess.p = message->payload;
     (*iter->second)((void*)&mess);
-
-
-
 
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);

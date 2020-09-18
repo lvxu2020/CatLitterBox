@@ -11,8 +11,8 @@ void DbusSend::sendASiganl(QString path, QString interface, QString signal , QSt
     QDBusMessage message = QDBusMessage::createSignal(path, interface, signal);
     message << value;
     if (QDBusConnection::sessionBus().send(message)) {
-        DEBUG_E("chenggong :%s",value.toStdString().c_str());
+        DEBUG_D("sendASiganl succeed :%s",value.toStdString().c_str());
     } else {
-        DEBUG_E("shibai:%s",value.toStdString().c_str());
+        DEBUG_D("sendASiganl fail :%s",value.toStdString().c_str());
     }
 }
