@@ -4,6 +4,15 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <thread>
+#include<unistd.h>
+
+
+#define GPIO23_VALUE_PATH "/sys/class/gpio/gpio23/value"
+#define LED_VALUE_PATH "/sys/class/leds/green/brightness"
 
 HardMaster* HardMaster::single = nullptr;
 pthread_once_t HardMaster::ponce_ = PTHREAD_ONCE_INIT;
@@ -17,17 +26,7 @@ HardMaster* HardMaster::instance()
 
 void HardMaster::processTask(int id)
 {
-    switch (id) {
-    case 0: {
-        openGpio23();
-    }
-        break;
-    case 1: {
-        closeGpio23();
-    }
-        break;
-    default: break;
-    }
+
 }
 
 HardMaster::HardMaster()
@@ -67,25 +66,72 @@ void HardMaster::destorySingle()
 
 void* HardMaster::run(void *arg)
 {
+    std::ifstream fGpio23(GPIO23_VALUE_PATH), fLed(LED_VALUE_PATH);
+    char lineBuf[10] = {0};
     while (true) {
-        sleep(5);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        memset(lineBuf,'\0',10);
+        fGpio23.getline(lineBuf, 10);
+        m_gpio23 = lineBuf;
+        fGpio23.close();
+
+        memset(lineBuf,'\0',10);
+        fLed.getline(lineBuf, 10);
+        m_gpio23 = lineBuf;
+        fLed.close();
     }
     return nullptr;
 }
 
+bool HardMaster::isExist(const std::string &pathname)
+{
+    if (access(pathname.c_str(), F_OK) == 0) {
+        return true;
+    }
+
+    return false;
+}
+
 void HardMaster::openGpio23()
 {
-//    system("sudo echo 1 > /sys/class/gpio/gpio23/value");
-//    FILE *fp;
-//    int rc;
-//    fp = popen("sudo echo 1 > /sys/class/gpio/gpio23/value", "r");
-//    if (fp == nullptr) {
-//        printf("sudo echo 1 > /sys/class/gpio/gpio23/value error");
-//    }
-//    pclose(fp);
+    system("echo 1 > /sys/class/gpio/gpio23/value");
+    FILE *fp;
+    int rc;
+    fp = popen("echo 1 > /sys/class/gpio/gpio23/value", "r");
+    if (fp == nullptr) {
+        printf("echo 1 > /sys/class/gpio/gpio23/value error");
+    }
+    pclose(fp);
 }
 
 void HardMaster::closeGpio23()
 {
-    system("sudo echo 0 > /sys/class/gpio/gpio23/value");
+    system("echo 0 > /sys/class/gpio/gpio23/value");
+}
+
+void HardMaster::openLed()
+{
+    system("echo 255 > /sys/class/leds/green/brightness");
+}
+
+void HardMaster::closeLed()
+{
+    system("echo 0 > /sys/class/leds/green/brightness");
+}
+
+int HardMaster::getHardStatus()
+{
+    int num = 0;
+    if (m_gpio23 == "0") {
+        num &= 0xfe;
+    }else {
+        num |= 0x1;
+    }
+
+    if (m_led == "0") {
+        num &= 0xfd;
+    }else {
+        num |= 0x2;
+    }
+    return num;
 }

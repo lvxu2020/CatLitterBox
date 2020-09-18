@@ -166,11 +166,21 @@ void DbusReceive::processTask(std::string& taskStr)
     }
     switch (atoi(str.c_str())) {
     case 0: {
-        Beat::instance()->setRecBeat(true);
+        str = JsonAdapter::parseNode(tast, "data");
+        if (str == "0") {
+            HardMaster::instance()->closeGpio23();
+        } else if (str == "1") {
+            HardMaster::instance()->openGpio23();
+        }
     }
         break;
     case 1: {
-
+        str = JsonAdapter::parseNode(tast, "data");
+        if (str == "0") {
+            HardMaster::instance()->closeLed();
+        } else if (str == "1") {
+            HardMaster::instance()->openLed();
+        }
     }
         break;
     case 2: {
@@ -178,13 +188,18 @@ void DbusReceive::processTask(std::string& taskStr)
     }
         break;
     case 3: {
-
+        str = JsonAdapter::parseNode(tast, "data");
+        LogUpload::instance()->setHttpPath(str);
+        LogUpload::instance()->start();
+        LogUpload::instance()->detach();
     }
         break;
     case 4: {
         Node root;
+        char num[10];
+        sprintf(num, "%d", HardMaster::instance()->getHardStatus());
         JsonAdapter::addValueToNode(root, "id", "1");
-        JsonAdapter::addValueToNode(root, "data", "3");
+        JsonAdapter::addValueToNode(root, "data", num);
         std::string send;
         JsonAdapter::getUnFormatStrFromNode(root, send);
         if (m_sendBus.sendASignal("/hmi/path", "code.back", "signal", send.c_str())) {

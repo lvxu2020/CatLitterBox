@@ -53,7 +53,6 @@ void* LogUpload::run(void *arg)
     if (fileSize < 0) {
         return nullptr;
     }
-
     char time[64]={0};
     long long int timestamp;
     struct timeval tv;

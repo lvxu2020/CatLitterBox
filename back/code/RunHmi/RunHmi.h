@@ -2,6 +2,7 @@
 #define RUNHMI_H
 
 #include "../Tool/Thread.h"
+#include "../Debug/Debug.h"
 
 
 class RunHmi : public Thread

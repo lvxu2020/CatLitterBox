@@ -7,7 +7,7 @@
 #include "HttpRequest.h"
 #include "../Debug/Debug.h"
 
-#define LOG_PATH "/tmp/CatLog/Log_0"
+#define LOG_PATH "/home/debian/log_hmi/Log_0"
 
 class LogUpload : public Thread
 {

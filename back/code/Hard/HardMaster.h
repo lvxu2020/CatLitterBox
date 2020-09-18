@@ -5,12 +5,18 @@
 #include <mutex>
 #include "../Tool/Thread.h"
 #include "../MyDbus/DbusAdapter.h"
+#include "../Debug/Debug.h"
 
 class HardMaster : public Thread
 {
 public:
     static HardMaster* instance();
     void processTask(int id);
+    void openGpio23();
+    void closeGpio23();
+    void openLed();
+    void closeLed();
+    int getHardStatus();
 private:
     HardMaster();
     ~HardMaster();
@@ -19,11 +25,12 @@ private:
     static void creatSingle();
     static void destorySingle();
     void* run(void *arg);
-    void openGpio23();
-    void closeGpio23();
+    bool isExist(const std::string &pathname);
 private:
     static HardMaster* single;
     static pthread_once_t ponce_;
+    std::string m_gpio23;
+    std::string m_led;
 };
 
 #endif // HARDMASTER_H

@@ -13,7 +13,7 @@
 #include <pthread.h>
 #include "../App/NetMonitor/netMonitor.h"
 
-
+class NetMonitor;
 #define TASK_Q_MAX 100
 
 
@@ -38,7 +38,7 @@ private:
     int m_detached;
     bool m_thredLife;
     std::mutex m_mutex;
-    friend class Singleton<NetMonitor>;
+    friend class Singleton <NetMonitor>;
     std::queue<std::string> task;
 
 };
