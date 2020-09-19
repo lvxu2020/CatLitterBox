@@ -28,10 +28,12 @@ void* RunHmi::run(void *arg)
     conf2.close();
 
     if (v2 > v1) {
-        DEBUG("start version 2");
+        DEBUG("start ver2");
+        system("echo 2 > /home/debian/Back/running");
         system("/home/debian/Cat/run2.sh");
     } else {
-        DEBUG("start version 1");
+        DEBUG("start ver1");
+        system("echo 1 > /home/debian/Back/running");
         system("/home/debian/Cat/run1.sh");
     }
 }

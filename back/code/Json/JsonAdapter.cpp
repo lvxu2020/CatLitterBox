@@ -78,7 +78,7 @@ void JsonAdapter::getStrFromNode(const Node& node, std::string& str)
 
 void JsonAdapter::getUnFormatStrFromNode(const Node& node, std::string& str)
 {
-    char *p = cJSON_Print(node.m_root);
+    char *p = cJSON_PrintUnformatted(node.m_root);
     str = p;
     free(p);
 }

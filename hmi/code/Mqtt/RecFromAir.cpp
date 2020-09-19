@@ -130,6 +130,12 @@ void RecFromAir::analysisTask(std::string remote)
             JsonAdapter::addValueToNode(root, "data", vec.at(3).c_str());
         }
             break;
+        case 5:{
+            ReadConf_Single::instance()->setAirVerson(vec.at(3));
+            ReadConf_Single::instance()->onAirVersonChange();
+            goto not_send_back;
+        }
+            break;
         default:break;
         }
         std::string strToBack;
@@ -138,6 +144,8 @@ void RecFromAir::analysisTask(std::string remote)
             DbusSend::sendASiganl("/", "code.hmi", "signal", strToBack.c_str());
         }
     }
+not_send_back:
+    return;
 }
 
 bool RecFromAir::threadIsActive()

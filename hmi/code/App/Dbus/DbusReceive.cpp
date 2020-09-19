@@ -3,6 +3,7 @@
 #include <QtDBus>
 #include <iostream>
 #include "../Json/JsonAdapter.h"
+#include "ToUI/ToUI.h"
 
 
 void DbusReceive::service_get(QString st)
@@ -16,7 +17,12 @@ void DbusReceive::service_get(QString st)
 
     switch (atoi(str.c_str())) {
     case 0: {// OTA
-
+        std::string str = JsonAdapter::parseNode(tast, "data");
+        if (str == "1") {
+            ToUI_Single::instance()->sig_updateResault(true);
+        }else {
+            ToUI_Single::instance()->sig_updateResault(false);
+        }
     }
         break;
     case 1: {// 硬件消息

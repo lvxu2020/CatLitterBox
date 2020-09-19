@@ -3,7 +3,9 @@
 
 #include "./WIFI/wifi.h"
 #include "./UI/WIFI/dialogwificonnect.h"
-#include "../Communication/ReadConf.h"
+#include "../Mqtt/ReadConf.h"
+#include "../Mqtt/SendToAir.h"
+#include "./ToUI/ToUI.h"
 #include <QDebug>
 #include <vector>
 #include "../Base/base.h"
@@ -22,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this,SIGNAL(sig_scanWIFI()),WIFI_Single::instance(),SLOT(slot_scanWIFI()));
     connect(WIFI_Single::instance(),SIGNAL(sig_connectStatus(std::string)),this,SLOT(slot_wifiConnectChanged(std::string)));
     connect(NetMonitor_Single::instance(),SIGNAL(sig_netSatusChange(bool)),this,SLOT(slot_netStatusChange(bool)));
+    connect(ReadConf_Single::instance(), SIGNAL(onAirVersonChange()), this,SLOT(slot_airVersonChange()));
     init();
 }
 
@@ -34,8 +37,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::init()
 {
-    //主页面左上角版本信息
-    ui->labVersonNum->setText("1.2.3");
     //主页面中间工作部分
     //WIFI tab页
     //WIFI链接状态
@@ -45,6 +46,8 @@ void MainWindow::init()
     ui->WIFIName->setText("");
     NetMonitor_Single::instance()->monitorTimerStart();
     ui->shebeihao->setText(QString::fromStdString(ReadConf_Single::instance()->getID()));
+    //主页面左上角版本信息
+    ui->labVersonNum->setText(QString::fromStdString(ReadConf_Single::instance()->getVerson()));
 
 }
 void MainWindow:: clearQListWidget(QListWidget * ptr ,QList<QListWidgetItem*> & vec){
@@ -136,14 +139,26 @@ void MainWindow::slot_netStatusChange(bool net)
 
 }
 
-void MainWindow::on_Btn_update_clicked()
+void MainWindow::slot_airVersonChange()
 {
-    updateMask->show();
+    DEBUG_D("slot_airVersonChange");
+    ui->label_lastVerson->setText(QString::fromStdString(ReadConf_Single::instance()->getAirVerson()));
 }
 
-
-
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_Btn_update_clicked()
 {
+    int newV = QString::fromStdString(ReadConf_Single::instance()->getAirVerson()).toInt();
+    int oldV = QString::fromStdString(ReadConf_Single::instance()->getVerson()).toInt();
+    if (newV <= oldV) return;
 
+    updateMask->show();
+    QString str = ";" + QString::fromStdString(ReadConf_Single::instance()->getID()) + ";2;1;";
+    SendToAir_Single::instance()->addTaskQ(str.toStdString());
+
+}
+
+void MainWindow::on_Btn_air_version_clicked()
+{
+    QString str = ";" + QString::fromStdString(ReadConf_Single::instance()->getID()) + ";0;1;";
+    SendToAir_Single::instance()->addTaskQ(str.toStdString());
 }

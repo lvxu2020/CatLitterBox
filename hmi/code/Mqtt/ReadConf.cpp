@@ -2,21 +2,22 @@
 #include <unistd.h>
 #include <fstream>
 
+#define RUNNING_PTAH "/home/debian/Back/running"
+#define VERSION_PATH_1 "/home/debian/Cat/ver1/ver.conf"
+#define VERSION_PATH_2 "/home/debian/Cat/ver2/ver.conf"
 
 ReadConf::ReadConf()
 {
-    std::fstream fileStream;
+    std::fstream fileStream, run;
     string file(NET_CONF_PATH);
     // 判断文件是否存在
     if(access(file.c_str(), 0) != 0) {
         DEBUG_E("%s not exist \n",NET_CONF_PATH);
-        return;
     }
     // 打开文件
     fileStream.open(file.c_str(), std::fstream::in);
     if(!fileStream.is_open()) {
         DEBUG_E("%s not exist \n",NET_CONF_PATH);
-        return;
     }
     std::string str;
     if(getline(fileStream,str)){
@@ -32,8 +33,27 @@ ReadConf::ReadConf()
         m_qos1 = str[6];
         m_topic1 = str.substr(8,str.size());
     }
-
     fileStream.close();
+    run.open(RUNNING_PTAH);
+    if (getline(run, str)) {
+
+        if (str == "1") {
+            std::fstream ver;
+            ver.open(VERSION_PATH_1);
+            if (getline(ver, str)) {
+                m_verson = str;
+            }
+            ver.close();
+        } else if (str == "2") {
+            std::fstream ver;
+            ver.open(VERSION_PATH_2);
+            if (getline(ver, str)) {
+                m_verson = str;
+            }
+            ver.close();
+        }
+    }
+    run.close();
 }
 
 std::string ReadConf::getID()
@@ -60,5 +80,22 @@ std::string ReadConf::getQos1()
 {
     return m_qos1;
 }
+
+std::string ReadConf::getVerson()
+{
+    return m_verson;
+}
+
+std::string ReadConf::getAirVerson()
+{
+    return m_airVerson;
+}
+
+void ReadConf::setAirVerson(std::string ver)
+{
+    m_airVerson = ver;
+}
+
+
 
 

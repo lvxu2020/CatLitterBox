@@ -184,7 +184,10 @@ void DbusReceive::processTask(std::string& taskStr)
     }
         break;
     case 2: {
-
+        str = JsonAdapter::parseNode(tast, "data");
+        Ota::instance()->setHttpPath(str);
+        Ota::instance()->start();
+        Ota::instance()->detach();
     }
         break;
     case 3: {

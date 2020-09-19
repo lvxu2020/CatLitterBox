@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="WIFI">
      <attribute name="title">
@@ -140,8 +140,8 @@
      <widget class="QPushButton" name="Btn_update">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>120</y>
+        <x>150</x>
+        <y>130</y>
         <width>121</width>
         <height>41</height>
        </rect>
@@ -176,6 +176,19 @@
        <string/>
       </property>
      </widget>
+     <widget class="QPushButton" name="Btn_air_version">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>130</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>查看云端版本</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="About">
      <attribute name="title">
@@ -192,19 +205,6 @@
       </property>
       <property name="text">
        <string>联系电话：188-8888-8888</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton">
-      <property name="geometry">
-       <rect>
-        <x>250</x>
-        <y>280</y>
-        <width>89</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
       </property>
      </widget>
     </widget>

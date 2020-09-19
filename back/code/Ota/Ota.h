@@ -5,6 +5,7 @@
 #include "../Tool/Thread.h"
 #include "../MyDbus/DbusAdapter.h"
 #include "HttpRequest.h"
+#include "../Json/JsonAdapter.h"
 
 #define DOWNLOAD_PATH_1 ""
 #define DOWNLOAD_PATH_2 ""
@@ -22,6 +23,7 @@ private:
     static void creatSingle();
     static void destorySingle();
     void* run(void *arg);
+    bool upDateResault(bool resault);
 private:
     static Ota* single;
     static pthread_once_t ponce_;

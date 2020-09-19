@@ -4,6 +4,13 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <fstream>
+#include <thread>
+#include <fstream>
+
+#define HMI_RUNNING_CONF_PATH "/home/debian/Back/running"
+#define VERSION_PATH_1 "/home/debian/Cat/ver1/ver.conf"
+#define VERSION_PATH_2 "/home/debian/Cat/ver2/ver.conf"
 
 Ota* Ota::single = nullptr;
 pthread_once_t Ota::ponce_ = PTHREAD_ONCE_INIT;
@@ -74,10 +81,95 @@ void* Ota::run(void *arg)
     downFile.send();
     // 服务器的响应存在buff里
     downFile.handleRead();
-    downFile.downloadFile("/home/debian/test/App");
-    system("sudo chmod 777 /home/debian/test/App");
+    std::ifstream conf(HMI_RUNNING_CONF_PATH);
+    char buf[10] = {0};
+    conf.getline(buf,10);
+    int run = atoi(buf), oldV, newV;
+    DEBUG("running app is %d", run);
+    conf.close();
+    if (run == 2) {
+        std::ifstream ver(VERSION_PATH_1);
+        char buf[10] = {0};
+        ver.getline(buf,10);
+        oldV = atoi(buf);
+        ver.close();
+        downFile.downloadFile("/home/debian/Cat/ver1/update.tar");
+        DEBUG("down load ok");
+        popen("sync", "r");
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+        FILE *fp;
+        // 解压会失败
+        for (int i = 3; i > 0; i--) {
+            if (newV > oldV) break;
+            popen("tar -xf /home/debian/Cat/ver1/update.tar", "r");
+            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+            fp = popen("sync", "r");
+            std::ifstream verNew(VERSION_PATH_1);
+            memset(buf, '\0', 10);
+//            verNew.seekg( ios::beg,0);
+            verNew.getline(buf,10,'\0');
+            newV = atoi(buf);
+            verNew.close();
+        }
+
+        system("chmod 777 /home/debian/Cat/ver1/App");
+        DEBUG("New v:%d;Old v:%d", newV, oldV);
+        upDateResault(newV > oldV);
+    } else if (run == 1) {
+        std::ifstream ver(VERSION_PATH_2);
+        char buf[10] = {0};
+        ver.getline(buf,10);
+        oldV = atoi(buf);
+        ver.close();
+        downFile.downloadFile("/home/debian/Cat/ver2/update.tar");
+        DEBUG("down load ok");
+        popen("sync", "r");
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+        FILE *fp;
+        // 解压会失败
+        for (int i = 3; i > 0; i--) {
+            if (newV > oldV) break;
+            popen("tar -xf /home/debian/Cat/ver2/update.tar", "r");
+            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+            fp = popen("sync", "r");
+            std::ifstream verNew(VERSION_PATH_2);
+            memset(buf, '\0', 10);
+            verNew.seekg(0);
+            verNew.getline(buf,10, '\0');
+            newV = atoi(buf);
+            verNew.close();
+        }
+
+        system("chmod 777 /home/debian/Cat/ver2/App");
+        DEBUG("New v:%d;Old v:%d", newV, oldV);
+        upDateResault(newV > oldV);
+    } else {
+        DEBUG("OTA CONF is bad");
+        upDateResault(false);
+        return nullptr;
+    }
 
     return nullptr;
+}
+
+bool Ota::upDateResault(bool resault)
+{
+    Node root;
+    std::string str;
+    JsonAdapter::addValueToNode(root, "id", "0");
+    if (resault) {
+        JsonAdapter::addValueToNode(root, "data", "1");
+    } else {
+        JsonAdapter::addValueToNode(root, "data", "0");
+    }
+    JsonAdapter::getUnFormatStrFromNode(root,str);
+
+    DbusAdapter send;
+    if (send.sendASignal("/hmi/path", "code.back", "signal", str)) {
+        DEBUG("%s", str.c_str());
+    }
 }
 
 

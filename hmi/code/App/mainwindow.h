@@ -28,6 +28,8 @@ private slots:
     void slot_scanfOver(bool);
     void slot_wifiConnectChanged(std::string);
     void slot_netStatusChange(bool);
+    void slot_airVersonChange();
+
     void on_WIFIScan_clicked();
 
     void on_listWIFI_clicked(const QModelIndex &index);
@@ -36,7 +38,7 @@ private slots:
 
     void on_Btn_update_clicked();
 
-    void on_pushButton_clicked();
+    void on_Btn_air_version_clicked();
 
 private:
     Ui::MainWindow *ui;

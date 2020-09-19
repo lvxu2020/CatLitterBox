@@ -2,6 +2,7 @@
 #define UPDATE_H
 
 #include <QDialog>
+#include <QTimer>
 
 namespace Ui {
 class Update;
@@ -17,6 +18,11 @@ public:
 
 private:
     Ui::Update *ui;
+    QTimer* update;
+private slots:
+    void slot_updateResault(bool);
+    void slot_shutDowd();
+    void slot_shutTimerStart();
 };
 
 #endif // UPDATE_H
