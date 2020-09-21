@@ -12,7 +12,7 @@ Update::Update(QWidget *parent) :
     connect(ToUI_Single::instance(), SIGNAL(sig_updateTimerStart()), this,SLOT(slot_shutTimerStart()));
     // 升级无响应40秒后重启
     update = new QTimer(this);
-    update->setInterval(30000);
+    update->setInterval(40000);
     update->setSingleShot(true);//触发一次
     connect(update,SIGNAL(timeout()),this,SLOT(slot_scanOver()));
 }

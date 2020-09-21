@@ -311,7 +311,7 @@ void HttpRequest::uploadFile(const std::string& file, const std::string& content
         m_buffer.hasWritten(nread);
         while(m_buffer.writableBytes() > 0)
         {
-            std::cout << "file read(): nread: " << nread << " remain: " << m_buffer.writableBytes();
+//            std::cout << "file read(): nread: " << nread << " remain: " << m_buffer.writableBytes();
             size_t n = fread(m_buffer.beginWrite(), 1, m_buffer.writableBytes(), fp);
             m_buffer.hasWritten(n);
             if(0 == n)
@@ -365,7 +365,7 @@ void HttpRequest::downloadFile(const std::string& file)
         nread = sockets::read(m_sockfd, m_buffer.beginWrite(), kBufferSize);
         if(nread < 0) std::cout << "sockets::read";
         m_buffer.hasWritten(nread);
-        std::cout << "sockets::read(): nread: " << nread << " remain: " << m_buffer.writableBytes() << " writtenBytes: " << writtenBytes;
+//        std::cout << "sockets::read(): nread: " << nread << " remain: " << m_buffer.writableBytes() << " writtenBytes: " << writtenBytes;
         size_t remain = kBufferSize - nread; 
         /*********************************************************
          * 小循环意义： 上面的read由于tcp的包一次传不完。有可能继续续包传输
