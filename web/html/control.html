@@ -1,0 +1,146 @@
+<html>
+ <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <script src="js/jquery-3.0.0.min.js"></script>
+ <script src="js/jquery.params.js"></script>
+	<script>
+	$(function(){
+	   getData1();
+	});
+
+	function getData1(){
+		var usr = $.query.get("usr");
+		
+	}
+	function getValue () {
+		return "hello";
+	}
+    </script>
+	
+ <title>命令下发</title>
+ <script>
+ function show()
+ {
+ var date =new Date();
+ var now = ""; 
+ now = date.getFullYear()+"年"; 
+ now = now + (date.getMonth()+1)+"月"; 
+ now = now + date.getDate()+"日"; 
+ now = now + date.getHours()+"时"; 
+ now = now + date.getMinutes()+"分";
+ now = now + date.getSeconds()+"秒"; 
+ document.getElementById("nowDiv").innerHTML = now; 
+ setTimeout("show()",1000);
+ }
+ </script> 
+ </head>
+<body>
+	<h2><font face="Broadway"><font color="#00FAF0">欢迎使用远程控制</font></font></H2>
+	<h2 align=center><font color="#cc0033"><body onload="show()"> <div id="nowDiv"></div></font></h2>
+	
+	<form id="form1" name="form1" method="get" action="cgi-bin/control.cgi">
+  <p>led点灯------------------------发动机------------------------------终端设备状态-----------</p>
+  <p>led_on
+    <input type="radio" name="radio" id="on" value="led_on" />
+    <label for="on"></label>
+  -------------------motor_on
+    <input type="radio" name="radio" id="on2" value="motor_on" />
+  ---------------------------
+  <input type="radio" name="radio" id="on3" value="status" />
+  -----------------
+  </p>
+  <p>led_off
+    <input type="radio" name="radio" id="off" value="led_off" />
+    <label for="off"></label>
+  ------------------ motor_off
+    <input type="radio" name="radio" id="off2" value="motor_off" />
+    <label for="off2"></label>
+  ------------------------------------------------  </p>
+  <p>
+    <input type="submit" name="button1" id="button1" value="提交" />
+  </p>
+  <p>说明led_on:cmd=1,led_off:cmd=2,motor_on:cmd=3,motor_off:cmd=4,status:cmd=5</p>
+</form>
+
+	<form id="ctl" action= "cgi-bin/control.cgi" method="get">
+     <br><br>设备号如果为0请从新登录<br>
+	 <input type="text" id="test"  name="num" value="" /><br><br>
+	 
+	<script type="text/javascript">
+	function getQueryString(name) {   
+  location.href.replace("#","");   
+  // 如果链接没有参数，或者链接中不存在我们要获取的参数，直接返回空        
+  if(location.href.indexOf("?")==-1 || location.href.indexOf(name+'=')==-1)     {           
+   return '';       
+  }         
+   // 获取链接中参数部分        
+   var queryString = location.href.substring(location.href.indexOf("?")+1);         
+   // 分离参数对 ?key=value&key2=value2        
+   var parameters = queryString.split("&");         
+  
+   var pos, paraName, paraValue;        
+   for(var i=0; i<=parameters.length; i++) {   
+   // 获取等号位置            
+   pos = parameters[i].split('=');            
+   if(pos == -1) { continue; }             
+   // 获取name 和 value            
+   paraName = pos[0];            
+   paraValue = pos[1];            
+   // 如果查询的name等于当前name，就返回当前值，同时，将链接中的+号还原成空格           
+   if(paraName == name) {        
+    return decodeURIComponent(paraValue.replace(/\+/g, " "));            
+   }        
+   }        
+  return '';    
+ }
+ var val = getQueryString("num");
+function f()
+{
+num = 1234567890;
+var val = getQueryString("num");
+
+document.getElementById('test').value=val;
+}
+f();
+
+</script>
+	</script>
+    </form>
+	<iframe src="status.html" id="neiqian" frameBorder="0" width="600" height="400" scrolling="no" ></iframe>
+	<script type="text/javascript">
+	function getQueryString(name) {   
+  location.href.replace("#","");   
+  // 如果链接没有参数，或者链接中不存在我们要获取的参数，直接返回空        
+  if(location.href.indexOf("?")==-1 || location.href.indexOf(name+'=')==-1)     {           
+   return '';       
+  }         
+   // 获取链接中参数部分        
+   var queryString = location.href.substring(location.href.indexOf("?")+1);         
+   // 分离参数对 ?key=value&key2=value2        
+   var parameters = queryString.split("&");         
+  
+   var pos, paraName, paraValue;        
+   for(var i=0; i<=parameters.length; i++) {   
+   // 获取等号位置            
+   pos = parameters[i].split('=');            
+   if(pos == -1) { continue; }             
+   // 获取name 和 value            
+   paraName = pos[0];            
+   paraValue = pos[1];            
+   // 如果查询的name等于当前name，就返回当前值，同时，将链接中的+号还原成空格           
+   if(paraName == name) {        
+    return decodeURIComponent(paraValue.replace(/\+/g, " "));            
+   }        
+   }        
+  return '';    
+ }
+ 
+	function change_url() {
+		var val = getQueryString("num");
+		var url = "status.html?" + "num=" + val;
+		document.getElementById('neiqian').src=url;
+	}
+	change_url();
+	</script>
+ </body>
+ </html>

@@ -1,0 +1,57 @@
+<html>
+ <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+ </head>
+<body>
+	<h2><font face="Broadway"><font color="#00FAF0">终端状态</font></font><br><br></H2>
+	<form id="adviceForm" action= "cgi-bin/status.cgi" method="get">
+	<h3>设备号，请勿修改</H3>
+	<input type="text" id="test" name="num" /><br><br>
+	
+	<script type="text/javascript">
+function getQueryString (name) {   
+	  location.href.replace("#","");   
+	  // 如果链接没有参数，或者链接中不存在我们要获取的参数，直接返回空        
+	  if(location.href.indexOf("?")==-1 || location.href.indexOf(name+'=')==-1)     {           
+	   return '';       
+	  }         
+	   // 获取链接中参数部分        
+	   var queryString = location.href.substring(location.href.indexOf("?")+1);         
+	   // 分离参数对 ?key=value&key2=value2        
+	   var parameters = queryString.split("&");         
+	  
+	   var pos, paraName, paraValue;        
+	   for(var i=0; i<=parameters.length; i++) {   
+	   // 获取等号位置            
+	   pos = parameters[i].split('=');            
+	   if(pos == -1) { continue; }             
+	   // 获取name 和 value            
+	   paraName = pos[0];            
+	   paraValue = pos[1];            
+	   // 如果查询的name等于当前name，就返回当前值，同时，将链接中的+号还原成空格           
+	   if(paraName == name) {        
+		return decodeURIComponent(paraValue.replace(/\+/g, " "));            
+	   }        
+	   }        
+	  return '';    
+}
+function f() {
+	num = 1234567890;
+	var val = getQueryString("num");
+	if(val != ""){
+		var url = "3;URL=/cgi-bin/status.cgi?num=" + val;
+		document.getElementById('test').value=val;
+	}else{
+		document.getElementById('test').value= "";
+	}
+}
+f();
+function subConfirm() {
+	setInterval("document.all.adviceForm.submit()",2000);
+}
+subConfirm();
+</script>
+ </form>
+ </body>
+ </html>
