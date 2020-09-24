@@ -26,6 +26,8 @@ private:
     static void destorySingle();
     void* run(void *arg);
     bool isExist(const std::string &pathname);
+    void gpio23Change();
+    void ledChange();
 private:
     static HardMaster* single;
     static pthread_once_t ponce_;

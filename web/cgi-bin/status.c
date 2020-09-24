@@ -87,5 +87,5 @@ int main()
           printf("%s\n","bad request!");
           return 0;
     }
-    printf("<meta http-equiv=\"Refresh\" content=\"5;URL=/cgi-bin/read.cgi/?num=%s\">",num);
+    printf("<meta http-equiv=\"Refresh\" content=\"3;URL=/cgi-bin/read.cgi/?num=%s\">",num);
 }

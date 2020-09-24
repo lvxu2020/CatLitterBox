@@ -43,10 +43,12 @@ void showStatus(int num)
     char status[100] = {0};
     fgets(status, 100, fp);
     fseek(fp,0,SEEK_SET);
-    fputs("-1",fp);
+    fputs("-1\n",fp);
     fclose(fp);
+    system("sync");
 
     int n = atoi(status);
+    printf("yuanshi:%s  ; n: %d  ;<br><br>",status,n);
     int led = 0, motor = 0;
     if (n == -1) {
         printf("获取数据失败请重新尝试");

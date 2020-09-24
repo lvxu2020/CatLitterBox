@@ -66,13 +66,14 @@ void HardMaster::destorySingle()
 
 void* HardMaster::run(void *arg)
 {
-    std::ifstream fGpio23(GPIO23_VALUE_PATH), fLed(LED_VALUE_PATH);
+
     char lineBuf[10] = {0};
-    while (true) {
+    while (true) {        
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::ifstream fGpio23(GPIO23_VALUE_PATH), fLed(LED_VALUE_PATH);
         memset(lineBuf,'\0',10);
         fGpio23.getline(lineBuf, 10);
-        m_gpio23 = lineBuf;
+        m_led = lineBuf;
         fGpio23.close();
 
         memset(lineBuf,'\0',10);
@@ -92,9 +93,28 @@ bool HardMaster::isExist(const std::string &pathname)
     return false;
 }
 
+void HardMaster::gpio23Change()
+{
+    std::ifstream fGpio23(GPIO23_VALUE_PATH);
+    char lineBuf[10] = {0};
+    memset(lineBuf,'\0',10);
+    fGpio23.getline(lineBuf, 10);
+    m_gpio23 = lineBuf;
+    fGpio23.close();
+}
+
+void HardMaster::ledChange()
+{
+    std::ifstream led(LED_VALUE_PATH);
+    char lineBuf[10] = {0};
+    memset(lineBuf,'\0',10);
+    led.getline(lineBuf, 10);
+    m_led = lineBuf;
+    led.close();
+}
+
 void HardMaster::openGpio23()
 {
-    system("echo 1 > /sys/class/gpio/gpio23/value");
     FILE *fp;
     int rc;
     fp = popen("echo 1 > /sys/class/gpio/gpio23/value", "r");
@@ -102,21 +122,25 @@ void HardMaster::openGpio23()
         printf("echo 1 > /sys/class/gpio/gpio23/value error");
     }
     pclose(fp);
+    gpio23Change();
 }
 
 void HardMaster::closeGpio23()
 {
     system("echo 0 > /sys/class/gpio/gpio23/value");
+    gpio23Change();
 }
 
 void HardMaster::openLed()
 {
     system("echo 255 > /sys/class/leds/green/brightness");
+    ledChange();
 }
 
 void HardMaster::closeLed()
 {
     system("echo 0 > /sys/class/leds/green/brightness");
+    ledChange();
 }
 
 int HardMaster::getHardStatus()
