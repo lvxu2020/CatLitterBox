@@ -30,16 +30,10 @@
 
 typedef struct mqbuf
 {
-        long type;
+        long id;
         char msg[MQ_MSGBUF_LEN];
 }MSG;
 
-enum remoteCmd
-{
-    status = 0,
-    chanshi,
-    remoteCmdMax
-};
 
 typedef struct
 {
@@ -56,7 +50,6 @@ bool getCommand(char * data,char *cmd,int len ,char *num)
     // 表单：radio=led_on&num=1&button1=%E6%8F%90%E4%BA%A4
     char *p = data;
     char choose[15] = {0};
-    char id[15] = {0};
     if (0 == memcmp(p,REMOTE_HEAD,strlen(REMOTE_HEAD))) {
         // 加上等于号
         p += strlen(REMOTE_HEAD) + 1;
@@ -73,7 +66,7 @@ bool getCommand(char * data,char *cmd,int len ,char *num)
         p += strlen("&num") + 1;
         int i = 0;
         while (*p != '&') {
-            id[i++] = *p++;
+            num[i++] = *p++;
         }
 
     } else {
@@ -105,37 +98,10 @@ bool getCommand(char * data,char *cmd,int len ,char *num)
     return true;
 }
 
-bool getSendMsg(CMD *cmd,char *data)
-{
-    if(strlen(data) > 50){
-        return false;
-    }
-
-    char *p = data;
-    int i = 0;
-    while(*p != ';' && i < sizeof(cmd->type)){
-        cmd->type[i] = *(p);
-        p++;
-        i++;
-    }
-    cmd->type[i + 1] = '\0';
-    i = 0;
-    p++;
-    while(*p != ';' && i < sizeof(cmd->value)){
-        cmd->value[i] = *(p);
-        p++;
-        i++;
-    }
-    cmd->value[i] = ';';
-    cmd->value[i+1] = '\0';
-    return true;
-}
-
-
 /* ***********
  * 任务处理
  * ***********/
-int processTask(char *cmd)
+int processTask(char *cmd, char *num)
 {
 
     key_t key = ftok(MQ_KEY_PATH,MQ_KEY_CHAR);
@@ -145,16 +111,12 @@ int processTask(char *cmd)
         return 0;
     }
     MSG buf;
-    CMD command;
-    if(getSendMsg(&command,cmd)){
-        bzero(&buf,sizeof(buf));
-        buf.type = atol(command.type);
-        strcpy(buf.msg,command.value);
-        msgsnd(msgid,&buf,MQ_MSGBUF_LEN,0);
-        printf("send msg type:%ld,msg:%s\n",buf.type,buf.msg);
-    }
-
-   return 1;
+    bzero(&buf,sizeof(buf));
+    buf.id = (long)atoi(num);
+    strncpy(buf.msg,cmd,strlen(cmd)+1);
+    msgsnd(msgid,&buf,MQ_MSGBUF_LEN,0);
+//    printf("send msg type:%ld,msg:%s\n",buf.id,buf.msg);
+    return 1;
 
 }
 
@@ -184,7 +146,7 @@ int main()
             fread(inputdata, sizeof(char), length, stdin);
             //获取命令
             if(getCommand(inputdata,command,length,num)){
-                processTask(command);
+                processTask(command,num);
             }else{
                 printf("任务解析失败\n");
             }
@@ -197,11 +159,11 @@ int main()
             printf("<p>错误：数据没有被输入或数据传输发生错误</p>");
         }else{
             int length = strlen(inputdata);
-            printf("+++html data len = %d++%s+++",strlen(inputdata),inputdata);
+//           printf("+++html data len = %d++%s+++",strlen(inputdata),inputdata);
             //获取命令
             if(getCommand(inputdata,command,length,num)){
                 printf("命令已发出！");
-                processTask(command);
+                processTask(command, num);
             }else{
                 printf("任务解析失败\n");
             }

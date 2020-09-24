@@ -30,6 +30,40 @@ typedef struct mqbuf
         char msg[MQ_MSGBUF_LEN];
 }MSG;
 
+void showStatus(int num)
+{
+    char file[100] = {0};
+    sprintf(file,"%s%d/status",STATUS_PATH,num);
+    FILE *fp = fopen(file, "r+");
+    if (fp == NULL) {
+        printf("文件打开失败\n");
+        return;
+    }
+
+    char status[100] = {0};
+    fgets(status, 100, fp);
+    fseek(fp,0,SEEK_SET);
+    fputs("-1",fp);
+    fclose(fp);
+
+    int n = atoi(status);
+    int led = 0, motor = 0;
+    if (n == -1) {
+        printf("获取数据失败请重新尝试");
+        return;
+    }
+    if (n & 0x1 == 1) {
+        led = 1;
+    }
+    if ((n & 0x2) >> 1 == 1) {
+        motor = 1;
+    }
+
+    printf("led_status: %d;<br><br>",led);
+    printf("motor_status: %d;<br><br>",motor);
+    return;
+}
+
 int main()
 {
 
@@ -66,20 +100,7 @@ int main()
         }else{
             int length = strlen(inputdata);
             sscanf(inputdata,"num=%s",num);
-            key_t key = ftok(MQ_KEY_PATH,MQ_KEY_CHAR);
-            int msgid = msgget(key,O_RDWR);
-            if (msgid <= 0){
-                printf("消息队列系统故障\n");
-            }else{
-                MSG buf;
-                char sendBuf[MQ_MSGBUF_LEN] = {0};
-                bzero(&buf,sizeof(buf));
-                buf.type = atol(num);
-                sprintf(sendBuf,";%s;4;1;", num);
-                strcpy(buf.msg,sendBuf);
-                msgsnd(msgid,&buf,MQ_MSGBUF_LEN,0);
-                printf("<br><br>正在请求终端数据请稍后!<br>");
-            }
+            showStatus(atoi(num));
 
         }
 
@@ -87,5 +108,5 @@ int main()
           printf("%s\n","bad request!");
           return 0;
     }
-    printf("<meta http-equiv=\"Refresh\" content=\"5;URL=/cgi-bin/read.cgi/?num=%s\">",num);
+    printf("<meta http-equiv=\"Refresh\" content=\"6;URL=/status.html?num=%s\">",num);
 }
