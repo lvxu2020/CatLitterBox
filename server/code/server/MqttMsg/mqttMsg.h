@@ -22,8 +22,7 @@
 #define TOPIC_L 64
 #define REC_BUF_MAX 128
 #define C_TO_S_HEAD "cTos:"
-#define WORK_PTAH_HEAD "/home/lvxu/usr/"
-#define USER_CONF_PATH "/home/lvxu/usr"
+#define USER_CONF_PATH "/home/lvxu/catServer/usr/"
 #define TOPIC_PATH "/home/lvxu/serverTop"
 #define STATUS "status"
 #define POOL_PTH_MIN 3

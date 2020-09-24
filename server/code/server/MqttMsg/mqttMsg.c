@@ -1,7 +1,7 @@
 #include "mqttMsg.h"
 
 #define PORT 1883
-#define ADDRESS "192.168.1.152"
+#define ADDRESS "192.168.1.118"
 #define TOPIC_S_C "sToC_"
 #define TOPIC_C_S "cToS"
 
@@ -38,7 +38,8 @@ void * mqttMsgRec(void *p)
         return -1;
     }
     //订阅主题
-    getSubscribe(client);
+//    getSubscribe(client);
+    MQTTClient_subscribe(client,"cToS",0);
     while (pool == NULL) {
         /*创建线程池，池里最小3个线程，最大100，队列最大100*/
         pool = threadpool_create(POOL_PTH_MIN,POOL_PTH_MAX,POOL_QUEUE_MAX);
@@ -92,7 +93,7 @@ void * mqttMsgSend(void *p)
         bzero(topic,sizeof(topic));
         sprintf(topic,"%s%d",TOPIC_S_C,task.N);
         bzero(sendBuf,sizeof(sendBuf));
-        sprintf(sendBuf,"%d;%s",task.id,task.buf);
+        sprintf(sendBuf,"%s",task.buf);
         printf("send topic: %s,,,%s",topic,sendBuf);
         publish_msg.payload=(void *)sendBuf;
         publish_msg.payloadlen=strlen(sendBuf)+1;
@@ -115,7 +116,7 @@ int opt_init( char buf[])
     char tempBuf[CONFIG_L] = {'\0'};
     FILE *fp = fopen(CONFIG_PATH,"r");
     if (NULL == fp) {
-        sprintf(buf,"tcp://127.0.0.1:1883");
+        sprintf(buf,"tcp://192.168.1.118:1883");
         printf("open server.conf faled\n");
     }else {
         int i = 0;
@@ -180,11 +181,12 @@ int getSubscribe(MQTTClient client)
             i++;
         }
         int connect = 0;
-        while (connect != i) {
-            printf("Subscribe to topic %s  using QOS %d\n",top[connect].topic,top[connect].qos);
-            MQTTClient_subscribe(client,top[connect].topic,top[connect].qos);
-            connect++;
-        }
+//        while (connect != i) {
+//            printf("Subscribe to topic %s  using QOS %d\n",top[connect].topic,top[connect].qos);
+//            MQTTClient_subscribe(client,top[connect].topic,top[connect].qos);
+//            connect++;
+//        }
+        MQTTClient_subscribe(client,"cToS",0);
         return i;
     }
 
@@ -219,50 +221,51 @@ void connlost(void *context,char *cause)
 bool analysisTask(DataFromClient *task,char *data)
 {
     printf("analysisTask in %s\n",data);
-    if (task == NULL) {
+    if (task == NULL || data[0] != ';') {
         return false;
     }
-    char *p = data;
+
+    char *p = data+1;
     char id[10] = {'\0'};
-    char type[10] = {'\0'};
-    if (0 != memcmp(p,C_TO_S_HEAD,strlen(C_TO_S_HEAD))) {
-        return false;
-    }
-    p += strlen(C_TO_S_HEAD);
+    char cmd[5] = {'\0'};
+    char value[5] = {'\0'};
     int i = 0;
-    while (*p != ';' && i < 9) {//小于9保证最后一位有\0
+    printf("start while is %c\n",data[0]);
+    while (*p != ';' && i < 10) {
         id[i++] = *p++;
     }
+    printf("id :%s\n",id);
+
+    i = 0; p++;
+    while (*p != ';' && i < 5) {
+        cmd[i++] = *p++;
+    }
+    printf("cmd :%s\n",cmd);
+    i = 0; p++;
+    while (*p != ';' && i < 5) {
+        value[i++] = *p++;
+    }
+    printf("value :%s\n",value);
     task->id = atoi(id);
-    if(*p++ != ';'){
-        return false;
-    }
-    i = 0;
-    while (*p != ';' && i < 9) {//小于9保证最后一位有\0
-        type[i++] = *p++;
-    }
-    task->type = atoi(type);
-    if(*p++ != ';'){
-        return false;
-    }
-    i = 0;
-    while (*p != ';' && i < REC_BUF_MAX -1) {//保证最后一位有\0
-        task->buf[i++] = *p++;
-    }
-    if(*p++ != ';'){
-        return false;
-    }else{
+    // zhuan huan ke neng shi bai
+    task->type = atoi(cmd) + 1;
+    strncpy(task->buf,value,5);
+
+   {
         switch (task->type) {
         case 0:{//消息上报，写在本地文件中
-            task->fun = &statusUpdate;
+
         }break;
-        case 1:{
-            task->fun = &regiseterId;
+        case 2:{
+            printf("add statusUpdate \n");
+            task->fun = &statusUpdate;
         }break;
         default :break;
         }
-        return true;
+
     }
+    printf("analysisTask out %s\n",data);
+    return true;
 }
 
 /* *******板子第一次联网后，向服务器申请id********
@@ -274,7 +277,7 @@ void *regiseterId(void *arg)
     int n = strlen(p->buf);
     n = n < REC_BUF_MAX ? n: REC_BUF_MAX;
 
-    return;
+    return NULL;;
 }
 
 /**************************
@@ -282,18 +285,25 @@ void *regiseterId(void *arg)
  * ********************** */
 void *statusUpdate(void *arg)
 {
+    printf("statusUpdate in\n");
     DataFromClient *p = (DataFromClient *)arg;
     int n = strlen(p->buf);
     n = n < REC_BUF_MAX ? n: REC_BUF_MAX;
     char path[128] = {'\0'};
-    sprintf(path,"%s/%d/%s",USER_CONF_PATH,p->id,STATUS);
+    sprintf(path,"%s%d/%s",USER_CONF_PATH,p->id,STATUS);
+    printf("path is %s\n",path);
     int fd = open(path,O_WRONLY);
     if (fd < 0) {
-        return ;
+        printf("open faild \n");
+        sleep(1);
+        fd = open(path,O_WRONLY);
+        if (fd < 0) return NULL;
     }
     lseek(fd,0,SEEK_SET);//定位在文档开头
     write(fd,p->buf,n);
     close(fd);
+    printf("statusUpdate  out \n");
+    return NULL;
 }
 
 bool getParmPtr(parmElement *arr, DataFromClient **p, int max)
@@ -335,7 +345,7 @@ void pushTaskPool(char *data)
 {
     lock_pool_mutex(pool);
     //从数组中拿空闲的指针。
-    DataFromClient *p =NULL;
+    DataFromClient *p = NULL;
     //队列满了，请求不受理
     if ( is_pool_queue_full(pool) || !getParmPtr(pArr,&p,sizeof(pArr))) {
         unlock_pool_mutex(pool);
