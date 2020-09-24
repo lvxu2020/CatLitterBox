@@ -39,15 +39,13 @@
 	<h2 align=center><font color="#cc0033"><body onload="show()"> <div id="nowDiv"></div></font></h2>
 	
 	<form id="form1" name="form1" method="get" action="cgi-bin/control.cgi">
-  <p>led点灯------------------------发动机------------------------------终端设备状态-----------</p>
+  <p>led点灯-----------------------发动机-----------------------</p>
   <p>led_on
     <input type="radio" name="radio" id="on" value="led_on" />
     <label for="on"></label>
   -------------------motor_on
     <input type="radio" name="radio" id="on2" value="motor_on" />
-  ---------------------------
-  <input type="radio" name="radio" id="on3" value="status" />
-  -----------------
+  ---------------
   </p>
   <p>led_off
     <input type="radio" name="radio" id="off" value="led_off" />
@@ -55,16 +53,12 @@
   ------------------ motor_off
     <input type="radio" name="radio" id="off2" value="motor_off" />
     <label for="off2"></label>
-  ------------------------------------------------  </p>
+  ---------------  </p>
+  <input type="hidden" id="test"  name="num" value="" /><br><br>	 
   <p>
     <input type="submit" name="button1" id="button1" value="提交" />
   </p>
-  <p>说明led_on:cmd=1,led_off:cmd=2,motor_on:cmd=3,motor_off:cmd=4,status:cmd=5</p>
-</form>
-
-	<form id="ctl" action= "cgi-bin/control.cgi" method="get">
-     <br><br>设备号如果为0请从新登录<br>
-	 <input type="text" id="test"  name="num" value="" /><br><br>
+  <p>说明功能无效时尝试清除浏览器缓存</p>
 	 
 	<script type="text/javascript">
 	function getQueryString(name) {   
@@ -93,15 +87,21 @@
    }        
   return '';    
  }
- var val = getQueryString("num");
-function f()
-{
-num = 1234567890;
-var val = getQueryString("num");
+	var val = getQueryString("num");
+	function f()
+	{
+	num = 1234567890;
+	var val = getQueryString("num");
 
-document.getElementById('test').value=val;
-}
-f();
+	document.getElementById('test').value=val;
+	}
+	f();
+
+</script>
+	</script>
+</form>
+
+
 
 </script>
 	</script>

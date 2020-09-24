@@ -20,6 +20,7 @@
 #define MQ_KEY_CHAR 'A'
 #define MQ_MSGBUF_LEN 50
 #define NUM 10
+#define REMOTE_HEAD "radio"
 
 /********命令种类**********
  * 字符串格式：（分号“；”是格式内一部分）
@@ -52,54 +53,56 @@ typedef struct
  * ***********/
 bool getCommand(char * data,char *cmd,int len ,char *num)
 {
+    // 表单：radio=led_on&num=1&button1=%E6%8F%90%E4%BA%A4
     char *p = data;
-    char cmdNum[NUM] = {0};
-    bool getCmd = false;
-    unsigned char rmtCmd[remoteCmdMax];
-    int i = 0;
-    for(;i < remoteCmdMax; i++){
-        rmtCmd[i] = 0x0;
+    char choose[15] = {0};
+    char id[15] = {0};
+    if (0 == memcmp(p,REMOTE_HEAD,strlen(REMOTE_HEAD))) {
+        // 加上等于号
+        p += strlen(REMOTE_HEAD) + 1;
+        int i = 0;
+        while (*p != '&') {
+            choose[i++] = *p++;
+        }
+    } else {
+        return false;
     }
-    if(len > 0){
-        while (*p != '\0') {
-            if(0 == rmtCmd[chanshi] && *p == 'c'){//铲屎
-                if (0 == memcmp(p,"chanshi=start",strlen("chanshi=start") )) {
-                    p += strlen("chanshi=start");
-                }
-                rmtCmd[chanshi] = 0x01;
-                continue;
-            }
 
-            if (!getCmd && *p == 'n') {
-                if (0 == memcmp(p,"num=",strlen("num="))) {
-                    p += strlen("num=");
-                    int i = 0;
-                    while(*p != '&' && *p != '\0' && i < NUM){
-                        cmdNum[i] = *p;
-                        i++;
-                        p++;
-                    }
-                    strcpy(num,cmdNum);
-                    getCmd = true;
-
-                    continue;
-                }
-            }
-            p++;
+    if (0 == memcmp(p,"&num",strlen("&num"))) {
+        // 加上等于号
+        p += strlen("&num") + 1;
+        int i = 0;
+        while (*p != '&') {
+            id[i++] = *p++;
         }
 
+    } else {
+        return false;
     }
-    if (getCmd) {
-        //停留在此页面状态肯定需要上报
-        rmtCmd[status] = 1;
-        sprintf(cmd,"%s;",cmdNum);
-        for (i = 0; i < remoteCmdMax; i++){
-            //保证一位代表枚举的一个命令
-            sprintf(cmd + (strlen(cmd)),"%d%c",rmtCmd[i] % 9,'\0');
+
+    int cmd_1 = -1, cmd_2 = -1;
+    if (choose[0] == 'l') {
+        if (choose[5] == 'n') {
+            cmd_1 = 1;
+            cmd_2 = 1;
+        }else if (choose[5] == 'f'){
+            cmd_1 = 1;
+            cmd_2 = 0;
         }
-        sprintf(cmd + (strlen(cmd)),";%c",'\0');
+    } else if (choose[0] == 'm') {
+        if (choose[7] == 'n') {
+            cmd_1 = 0;
+            cmd_2 = 1;
+        }else if (choose[7] == 'f'){
+            cmd_1 = 0;
+            cmd_2 = 0;
+        }
     }
-    return getCmd;
+    if (cmd_1 < 0 || cmd_2 < 0) {
+        return false;
+    }
+    sprintf(cmd,";%s;%d;%d;",num , cmd_1, cmd_2);
+    return true;
 }
 
 bool getSendMsg(CMD *cmd,char *data)
