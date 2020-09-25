@@ -3,6 +3,8 @@
 #include <getopt.h>
 #include "Debug/Debug.h"
 #include "Config/config.h"
+#include "Register/register.h"
+#include "Control/control.h"
 
 /* ***********************************
  * 解析命令行参数
@@ -56,17 +58,17 @@ int main(int argc, char * argv[])
     {
         printf("初始化失败，请检查配置文件\n");
     }
-//    pthread_t reg_id,ctl_id,mqtt_rec_id,mqtt_send_id;
-//    //注册用户
-//    pthread_create(&reg_id,NULL,registerUsr,NULL);
-//    //远程控制命令
-//    pthread_create(&ctl_id,NULL,remoteCmd,NULL);
+    pthread_t reg_id,ctl_id,mqtt_rec_id,mqtt_send_id;
+    //注册用户
+    pthread_create(&reg_id,NULL,register_usr,NULL);
+    //远程控制命令
+    pthread_create(&ctl_id,NULL,remote_control,NULL);
 //    //mqtt操作
 //    pthread_create(&mqtt_rec_id,NULL,mqttMsgRec,NULL);
 //    pthread_create(&mqtt_send_id,NULL,mqttMsgSend,NULL);
 
-//    pthread_join(reg_id,NULL);
-//    pthread_join(ctl_id,NULL);
+    pthread_join(reg_id,NULL);
+    pthread_join(ctl_id,NULL);
 //    pthread_join(mqtt_send_id,NULL);
 //    pthread_join(mqtt_rec_id,NULL);
     return 0;

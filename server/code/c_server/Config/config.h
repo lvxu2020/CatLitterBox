@@ -17,6 +17,7 @@ enum config_line {
     mqtt_port,
     mqtt_s_sub_topic,
     app_verson,
+    server_usr_path,
 
     LINEMAX
 };

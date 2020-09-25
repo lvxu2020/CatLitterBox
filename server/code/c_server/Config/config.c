@@ -24,9 +24,10 @@ bool config_init()
         DEBUG_I(" %s", config_arr[i-1]);
         if (LINEMAX == i) break;
     }
-    if (i != LINEMAX - 1) {
+    if (i != LINEMAX ) {
         fclose(fp);
         return false;
     }
     fclose(fp);
+    return true;
 }
