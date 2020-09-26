@@ -186,29 +186,19 @@ void *adjust_thread(void *threadpool)
     }
     return NULL;
 }
-//lvxu  防止外部无限制加入队列，导致过多申请空间
-void lock_pool_mutex(threadpool_t *pool)
-{
-    pthread_mutex_lock( &(pool->lock) );
-}
-void unlock_pool_mutex(threadpool_t *pool)
-{
-    pthread_mutex_unlock( &(pool->lock) );
-}
-//此函数配合 lock_pool_mutex 和 unlock_pool_mutex 使用。保证独占资源
-bool is_pool_queue_full(threadpool_t *pool)
-{
-     if (pool->queue_size == pool->queue_max_size) {
-         return true;
-     }else{
-         return false;
-     }
-}
-/* 下面为原版 此处为适应项目自我改造，使用前配合上面两个函数判断是否为空 */
+
+/* 向任务队列中， 添加一个任务 */
 int threadpool_add(threadpool_t *pool, void *(*function)(void *arg), void *arg)
 {
-    if((pool->queue_size == pool->queue_max_size) || (pool->shutdown)){
-        return 0;
+    pthread_mutex_lock( &(pool->lock) );
+    /* ==为真，队列已经满， 调wait阻塞 */
+    while ((pool->queue_size == pool->queue_max_size) && (!pool->shutdown))
+    {
+        pthread_cond_wait(&(pool->queue_not_full), &(pool->lock));
+    }
+    if (pool->shutdown)
+    {
+        pthread_mutex_unlock(&(pool->lock));
     }
     /* 清空 工作线程 调用的回调函数 的参数arg */
     if (pool->task_queue[pool->queue_rear].arg != NULL)
@@ -223,42 +213,9 @@ int threadpool_add(threadpool_t *pool, void *(*function)(void *arg), void *arg)
     pool->queue_size++;
     /*添加完任务后，队列不为空，唤醒阻塞在为空的那个条件变量上中的线程*/
     pthread_cond_signal(&(pool->queue_not_empty));
-    return 1;
+    pthread_mutex_unlock(&(pool->lock));
+    return 0;
 }
-//end lvxu
-///* 向任务队列中， 添加一个任务 */
-//int threadpool_add(threadpool_t *pool, void *(*function)(void *arg), void *arg)
-//{
-//    pthread_mutex_lock( &(pool->lock) );
-//    /* ==为真，队列已经满， 调wait阻塞 */
-//    while ((pool->queue_size == pool->queue_max_size) && (!pool->shutdown))
-//    {
-//        pthread_cond_wait(&(pool->queue_not_full), &(pool->lock));
-//    }
-//    if (pool->shutdown)
-//    {
-//        pthread_mutex_unlock(&(pool->lock));
-//    }
-//    /* 清空 工作线程 调用的回调函数 的参数arg */
-//    if (pool->task_queue[pool->queue_rear].arg != NULL)
-//    {
-//        free(pool->task_queue[pool->queue_rear].arg);
-//        pool->task_queue[pool->queue_rear].arg = NULL;
-//    }
-//    /*添加任务到任务队列里*/
-//    pool->task_queue[pool->queue_rear].function = function; //在队列的尾部添加元素
-//    pool->task_queue[pool->queue_rear].arg = arg;
-//    pool->queue_rear = (pool->queue_rear + 1) % pool->queue_max_size; /* 队尾指针移动, 模拟环形 */
-//    pool->queue_size++;
-//    /*添加完任务后，队列不为空，唤醒阻塞在为空的那个条件变量上中的线程*/
-//    pthread_cond_signal(&(pool->queue_not_empty));
-//    pthread_mutex_unlock(&(pool->lock));
-//    return 0;
-//}
-
-
-
-
 
 int threadpool_free(threadpool_t *pool)
 {
