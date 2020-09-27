@@ -399,6 +399,7 @@ void HttpRequest::downloadFile(const std::string& file)
     output.close();
     sockets::close(m_sockfd);
     m_buffer.retrieveAll();
+    system("sync");
 }
 
 void HttpRequest::SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)

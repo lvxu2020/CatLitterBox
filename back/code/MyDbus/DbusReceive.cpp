@@ -212,6 +212,9 @@ void DbusReceive::processTask(std::string& taskStr)
         }
     }
         break;
+    case 5: {
+        Beat::instance()->setRecBeat(true);
+    }
     default: break;
     }
 }

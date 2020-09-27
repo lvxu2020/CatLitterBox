@@ -1,7 +1,5 @@
 #include "control.h"
 
-myQueue *sendQ_ptr = NULL;
-
 void * remote_control(void *p)
 {
     DEBUG_I("remote_control start");
@@ -12,7 +10,6 @@ void * remote_control(void *p)
         return NULL;
     }
 
-    sendQ_ptr = get_queue();
     MSG rec_buf;
     int n;
     while (1) {
@@ -65,17 +62,5 @@ int get_mq_id(char *path, char ch)
  * ******************************** */
 void process_task(MSG *p)
 {
-    qData in;
-    /* ********************************
-     * 把用户分组，省的mqtt服务器发送大量数据
-     * 用户注册用户时会根据板子id号编进不同
-     * 分组。GROUP_LINE 决定分组系数
-     * ******************************** */
-    in.N = p->type % GROUP_LINE;
-    in.id = p->type;
-    snprintf(in.buf, BUF_MAX, "%s", p->msg);
-    if(full_queue(sendQ_ptr)){
-       empty_Queue(sendQ_ptr);
-    }
-    enter_Queue(sendQ_ptr,&in);
+    analysis_task_from_web(p->msg, strlen(p->msg) + 1);
 }

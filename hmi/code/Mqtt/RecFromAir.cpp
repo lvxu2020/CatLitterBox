@@ -162,7 +162,7 @@ void* RecFromAir::getTask(void *arg)
     char buf[p->len];
     memcpy(buf,(char*)p->p,p->len);
     std::string push(buf);
-    printf("getTask : %s\n",push.c_str());
+    DEBUG_D("getTask : %s\n",push.c_str());
     RecFromAir_Single::instance()->addTaskQ(push);
     //不写返回值，系统各种崩溃
     return NULL;

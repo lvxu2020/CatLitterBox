@@ -15,6 +15,9 @@
 #define DEFAULT_TIME 5 //5s检测一次
 #define MIN_WAIT_TASK_NUM 10/*如果queue_size > MIN_WAIT_TASK_NUM 添加新的线程到线程池*/
 #define DEFAULT_THREAD_VARY 10/*每次创建和销毁线程的个数*/
+#define POOL_PTH_MIN 3
+#define POOL_PTH_MAX 100
+#define POOL_QUEUE_MAX 100
 
 
 typedef struct

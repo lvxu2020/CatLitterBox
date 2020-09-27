@@ -13,8 +13,9 @@
 #include <sys/msg.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "../Queue/myQueue.h"
 #include "Debug/Debug.h"
+#include "../Task/pool.h"
+#include "../Task/taskFromWeb.h"
 
 #define MQ_KEY_PATH "/lib"
 #define MQ_KEY_CHAR 'A'

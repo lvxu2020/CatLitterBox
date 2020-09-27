@@ -15,7 +15,6 @@ enum config_line {
     http_down_path,
     mqtt_ip,
     mqtt_port,
-    mqtt_s_sub_topic,
     app_verson,
     server_usr_path,
 

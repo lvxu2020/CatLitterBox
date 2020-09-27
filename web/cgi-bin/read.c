@@ -48,7 +48,6 @@ void showStatus(int num)
     system("sync");
 
     int n = atoi(status);
-    printf("yuanshi:%s  ; n: %d  ;<br><br>",status,n);
     int led = 0, motor = 0;
     if (n == -1) {
         printf("获取数据失败请重新尝试");

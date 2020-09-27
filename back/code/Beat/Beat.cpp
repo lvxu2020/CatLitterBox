@@ -44,8 +44,8 @@ void Beat::destorySingle()
 
 void* Beat::run(void *arg)
 {
-//    DEBUG("Beat start");
-//    sleep(6);//延时6秒等待两边程序初始化
+    DEBUG("Beat start");
+    sleep(5);//延时5秒等待两边程序初始化
 //    while (true) {
 //        if (m_recBeat) {
 //            setRecBeat(false);
@@ -53,17 +53,7 @@ void* Beat::run(void *arg)
 //            DEBUG("start reboot");
 //            system("sudo reboot");
 //        }
-//        sleep(2);
-//    }
-    DEBUG("Beat start");
-//    DbusAdapter send;
-//    while (1) {
-//        sleep(2);
-//        if(send.sendASignal("/hmi/path", "code.hmi", "signal", "lvxu_ya")){
-//            printf("back  send  succeed \n");
-//        }else{
-//            printf("back  send  faild \n");
-//        }
+//        sleep(3);
 //    }
     return nullptr;
 }

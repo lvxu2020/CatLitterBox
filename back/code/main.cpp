@@ -6,6 +6,7 @@
 #include "Beat/Beat.h"
 #include "RunHmi/RunHmi.h"
 #include <unistd.h>
+#include <thread>
 
 void downTest()
 {
@@ -41,10 +42,10 @@ int main()
     RunHmi hmi;
     DbusReceive::instance()->addListenSig("code.hmi","signal");
     DbusReceive::instance()->start();
-    Beat::instance()->start();
-    HardMaster::instance()->start();
     hmi.start();
     hmi.detach();
+    Beat::instance()->start();
+    HardMaster::instance()->start();  
     Beat::instance()->join();
     DbusReceive::instance()->join();
     return 0;

@@ -45,12 +45,10 @@ void Beat::destorySingle()
 
 void* Beat::run(void *arg)
 {
-    return nullptr;
     Node root;
-    JsonAdapter::addValueToNode(root, "id", "0");
+    JsonAdapter::addValueToNode(root, "id", "5");
     std::string send;
     JsonAdapter::getUnFormatStrFromNode(root, send);
-    root.~Node();
     while (true) {
         DbusSend::sendASiganl("/", "code.hmi", "signal", send.c_str());
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));

@@ -19,8 +19,9 @@ bool config_init()
         return false;
     }
 
-    int i = 0;
+    int i = 0, j = 0;
     while (fgets(config_arr[i++], 100, fp)) {
+        config_arr[i-1][strlen(config_arr[i-1]) -1] = '\0';
         DEBUG_I(" %s", config_arr[i-1]);
         if (LINEMAX == i) break;
     }

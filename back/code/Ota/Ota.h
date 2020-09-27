@@ -14,6 +14,7 @@ class Ota : public Thread
 {
 public:
     static Ota* instance();
+    void setNewVerSize(int size);
     void setHttpPath(std::string path);
 private:
     Ota();
@@ -28,6 +29,7 @@ private:
     static Ota* single;
     static pthread_once_t ponce_;
     std::string m_httpPath;
+    int m_newVerSize;
 };
 
 #endif // OTA_H

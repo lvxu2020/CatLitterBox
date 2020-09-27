@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <string.h>
+#include <thread>
 
 
 #define VERSION_PATH_1 "/home/debian/Cat/ver1/ver.conf"

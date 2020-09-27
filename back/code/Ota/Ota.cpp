@@ -88,26 +88,28 @@ void* Ota::run(void *arg)
     DEBUG("running app is %d", run);
     conf.close();
     if (run == 2) {
+        system("rm /home/debian/Cat/ver1/update.tar");
         std::ifstream ver(VERSION_PATH_1);
         char buf[10] = {0};
         ver.getline(buf,10);
         oldV = atoi(buf);
         ver.close();
         downFile.downloadFile("/home/debian/Cat/ver1/update.tar");
-        DEBUG("down load ok");        
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        DEBUG("down load ok");
+        popen("sync", "r");
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         popen("sync", "r");
 
         FILE *fp;
         // 解压会失败
-        for (int i = 3; i > 0; i--) {
+        for (int i = 10; i > 0; i--) {
             if (newV > oldV) break;
             popen("tar -xf /home/debian/Cat/ver1/update.tar", "r");
-            std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             fp = popen("sync", "r");
             std::ifstream verNew(VERSION_PATH_1);
             memset(buf, '\0', 10);
-//            verNew.seekg( ios::beg,0);
+            verNew.seekg(0);
             verNew.getline(buf,10,'\0');
             newV = atoi(buf);
             verNew.close();
@@ -117,29 +119,31 @@ void* Ota::run(void *arg)
         DEBUG("New v:%d;Old v:%d", newV, oldV);
         upDateResault(newV > oldV);
     } else if (run == 1) {
+        system("rm /home/debian/Cat/ver2/update.tar");
         std::ifstream ver(VERSION_PATH_2);
         char buf[10] = {0};
         ver.getline(buf,10);
         oldV = atoi(buf);
         ver.close();
         downFile.downloadFile("/home/debian/Cat/ver2/update.tar");
-        DEBUG("down load ok");       
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        popen("sync", "r");
+        DEBUG("down load ok");
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         popen("sync", "r");
 
         FILE *fp;
         // 解压会失败
-        for (int i = 3; i > 0; i--) {
+        for (int i = 10; i > 0; i--) {
             if (newV > oldV) break;
             popen("tar -xf /home/debian/Cat/ver2/update.tar", "r");
-            std::this_thread::sleep_for(std::chrono::milliseconds(2500));
-            fp = popen("sync", "r");            
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            fp = popen("sync", "r");
             std::ifstream verNew(VERSION_PATH_2);
             memset(buf, '\0', 10);
             verNew.seekg(0);
             verNew.getline(buf,10, '\0');
             newV = atoi(buf);
-            printf("i is:%d,new is :%d\n", i, newV);
+            DEBUG("i is:%d,new is :%d\n", i, newV);
             verNew.close();
         }
 
