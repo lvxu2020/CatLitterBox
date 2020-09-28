@@ -46,14 +46,14 @@ void* Beat::run(void *arg)
 {
     DEBUG("Beat start");
     sleep(5);//延时5秒等待两边程序初始化
-//    while (true) {
-//        if (m_recBeat) {
-//            setRecBeat(false);
-//        }else {
-//            DEBUG("start reboot");
-//            system("sudo reboot");
-//        }
-//        sleep(3);
-//    }
+    while (true) {
+        if (m_recBeat) {
+            setRecBeat(false);
+        }else {
+            DEBUG("start reboot");
+            system("sudo reboot");
+        }
+        sleep(3);
+    }
     return nullptr;
 }

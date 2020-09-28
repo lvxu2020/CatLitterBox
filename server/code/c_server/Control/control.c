@@ -46,7 +46,7 @@ void * remote_control(void *p)
  * ************************ */
 int get_mq_id(char *path, char ch)
 {
-    key_t key = ftok(MQ_KEY_PATH,MQ_KEY_CHAR);
+    key_t key = ftok(path,ch);
     int msg_id = msgget(key,O_RDWR);
     if (msg_id >= 0) {
         msgctl(msg_id,IPC_RMID,NULL);

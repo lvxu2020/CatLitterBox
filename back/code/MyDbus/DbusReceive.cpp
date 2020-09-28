@@ -122,7 +122,7 @@ DBusHandlerResult DbusReceive::msgHandle(DBusConnection* connection, DBusMessage
             return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
         }
         if (dbus_message_is_signal(msg, it->m_interface.c_str(), it->m_signal.c_str())) {
-            DEBUG("get it:%s",str);
+//            DEBUG("get it:%s",str);
             std::string taskStr(str);
             DbusReceive::instance()->processTask(taskStr);
 //            dbus_free(str); // 经过测试dbus-1 释放会报错。
